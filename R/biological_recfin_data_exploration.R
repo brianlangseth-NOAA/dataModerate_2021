@@ -10,15 +10,14 @@
 #############################################################
 #############################################################
 
-analyze.recfin("SQUARESPOT ROCKFISH",
-               "L://Assessments//CurrentAssessments//DataModerate_2021//Squarespot_Rockfish//data//RecFIN Sample Data")
-
-analyze.recfin("SQUARESPOT ROCKFISH",
-               "L://Assessments//CurrentAssessments//DataModerate_2021//Squarespot_Rockfish//data//RecFIN Sample Data")
-
-species="QUILLBACK ROCKFISH"
-directory="L://Assessments//CurrentAssessments//DataModerate_2021//Quillback_Rockfish//data//RecFIN Sample Data"
-
+analyze.recfin("QUILLBACK ROCKFISH",
+               "L://Assessments//CurrentAssessments//DataModerate_2021//Quillback_Rockfish//data//RecFIN Sample Data",
+               maxa = 90,
+               alpha = 0.1/1000,
+               beta = 2.5,
+               linf = 41.8,
+               vonbK = 0.07,
+               t0 = -6.8)
 
 analyze.recfin <- function(species, directory, maxa, alpha, beta, linf, vonbK , t0) {
   
@@ -33,10 +32,7 @@ analyze.recfin <- function(species, directory, maxa, alpha, beta, linf, vonbK , 
   species_name <- tolower(species)
   
   #Read in full data scripts
-  wa <- read.csv(paste0(dir, "/wetzel_wa_comp_bio_age_inventory_20200117.csv"))
-  or <- read.csv(paste0(dir, "/wetzel_or_comp_bio_age_inventory_20200117.csv"))
-  ca <- read.csv(paste0(dir, "/wetzel_ca_comp_bio_age_inventory_20200117.csv"))
-  
+  load("wetzel_comp_bio_age_inventory_20200117.RData")
   
   ###########################################################################
   #Set up lengths and weights
@@ -60,32 +56,28 @@ analyze.recfin <- function(species, directory, maxa, alpha, beta, linf, vonbK , 
   #Combine data for all states
   all <- rbind(subwa, subor, subca)
   
-  # Remove improper areas
+  # Remove improper areas (non ocean or not known areas)
   # All of Washington records are from "NOT KNOWN" areas so keeping those
-  all <- all[all$RECFIN_WATER_AREA_NAME %in% c("OCEAN", "OCEAN > 3 MILES", "NOT KNOWN"), ]
+  all <- all[grepl("OCEAN", all$RECFIN_WATER_AREA_NAME) | grepl("NOT KNOWN", all$RECFIN_WATER_AREA_NAME), ]
   
   # Determine the right lengths in cm
   # First check if any lengths are fork length
   all <- all[!is.na(all$AGENCY_LENGTH),]
   if(dim(table(all$AGENCY_LENGTH_TYPE)>0)) print("There is a mix of fork and total lengths")
-  plot(all$AGENCY_LENGTH, all$RECFIN_LENGTH_MM)
-  abline(1,1)
+  # Now determine the lengths in cm
   all$length_cm <- NA
-  if(sum(all$AGENCY_LENGTH != all$RECFIN_LENGTH_MM) > 0) { #Are agency lengths all in MM?
-    all$length_cm <- all$AGENCY_LENGTH / 10 #If so use Agency_Length and convert to cm
-  }else{ #If not, investigate further
-    find <- which(all$AGENCY_LENGTH_UNITS == "C")
-    all$length_cm[find] <- all$AGENCY_LENGTH[find]
-    find <- which(all$AGENCY_LENGTH_UNITS == "M")
-    all$length_cm[find] <- all$AGENCY_LENGTH[find] / 10
-    find <- all$AGENCY_LENGTH_UNITS == "" & all$AGENCY_LENGTH > 100
-    all$length_cm[find] <- all$AGENCY_LENGTH[find] / 10
-    find <- is.na(all$length_cm)
-    all$length_cm[find] <- all$RECFIN_LENGTH_MM[find] / 10 #If no info, then use assumption by RecFIN
-    quantile(all$length_cm)
-  }
-  
-  # Determine the weights
+  find <- all$AGENCY_LENGTH_UNITS == "C"
+  all$length_cm[find] <- all$AGENCY_LENGTH[find]
+  find <- all$AGENCY_LENGTH_UNITS == "M"
+  all$length_cm[find] <- all$AGENCY_LENGTH[find] / 10
+  find <- all$AGENCY_LENGTH_UNITS == "" & all$AGENCY_LENGTH > 100
+  all$length_cm[find] <- all$AGENCY_LENGTH[find] / 10
+  find <- is.na(all$length_cm)
+  all$length_cm[find] <- all$RECFIN_LENGTH_MM[find] / 10 #If no info, then use assumption by RecFIN
+  print("Quantiles of lengths (cm):")
+  print(quantile(all$length_cm))
+
+  # Determine the weights in kg
   all$weight_kg <- all$AGENCY_WEIGHT
   find <- which(all$AGENCY_WEIGHT_UNITS == "K")
   all$weight_kg[find] <- all$AGENCY_WEIGHT[find]
@@ -94,7 +86,9 @@ analyze.recfin <- function(species, directory, maxa, alpha, beta, linf, vonbK , 
   #all[which(all$weight_kg > 5),"weight_kg"] = 0
   plot(all$weight_kg, all$RECFIN_IMPUTED_WEIGHT_KG)
   
-  table(all$RECFIN_YEAR, all$area)
+  #Output table of sample size of lengths by year
+  print("Number of lengths by year and area")
+  print(table(all$RECFIN_YEAR, all$area))
   
   ###########################################################################
   # Read in the RecFIN Ages
@@ -102,7 +96,6 @@ analyze.recfin <- function(species, directory, maxa, alpha, beta, linf, vonbK , 
   if(species_name != "squarespot rockfish"){
     ages = read.csv(paste0(dir,"/",strsplit(species_name," ")[[1]][1],"_recfin_ages_SD056--1980-2019.csv"))
     ages$length_cm = ages$RECFIN_LENGTH_MM / 10
-    plot(ages$length_cm, ages$RECFIN_LENGTH_MM)
   }
   
   ##########################################################################
@@ -122,7 +115,7 @@ analyze.recfin <- function(species, directory, maxa, alpha, beta, linf, vonbK , 
   #Plot of W-L across areas
   png(filename = paste0(strsplit(species_name," ")[[1]][1],'_biology_recfin.png'), height = 7, width = 7, units = "in", res = 300)
   par(mfrow = c(2,1))
-  plot(0,  ylim = c(0, maxW), xlim = c(0, maxL), col = cols[1], xlab = "Length (cm)", ylab = "Weight (kg)", main = species_name)
+  plot(0, type="n", ylim = c(0, maxW), xlim = c(0, maxL), col = cols[1], xlab = "Length (cm)", ylab = "Weight (kg)", main = species_name)
   for(i in 1:length(unique(all$area))){
     find = all$area == unique(all$area)[i] & all$weight_kg != 0
     points(all[find, "length_cm"], all[find, "weight_kg"], col = cols[i], pch = 16)
