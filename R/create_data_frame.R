@@ -23,6 +23,7 @@ create_data_frame <- function(data_list, areas = NA){
 
 			if (!is.na(areas)) { 
 				areas = data_list[[a]]$GENLOC}
+			areas <- ifelse( data_list[[a]]$SITENAME > 500, "CCA", "non_CCA")
 
 			hkl    <- data.frame(Year = data_list[[a]]$YEAR,
 								 Lat = data_list[[a]]$LATDD,
