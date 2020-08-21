@@ -5,15 +5,16 @@
 #' @param dir
 #' @param list of data
 #' @param splits
+#' @param ests
 #'
 #' @return Nothing - plots
 #'
 #' @author Chantel Wetzel
 #' @export
 #'
-length_weight_plot <- function(dir, data, splits = NA, nm_append = NULL){
+length_weight_plot <- function(dir, data, splits = NA, nm_append = NULL, ests = NULL){
 
-dir.create(file.path(dir, "plots"))
+dir.create(file.path(dir, "plots"), showWarnings = TRUE)
 
 sources = unique(data$Source)
 n = length(sources)
@@ -33,6 +34,8 @@ rich.colors.short <- function(n, alpha=1){
 
 colors = rich.colors.short(n + 1, alpha = 0.4)
 
+lens = 1:max(data$Length, na.rm = TRUE)
+
 ymax = max(data$Weight, na.rm = TRUE)
 xmax = max(data$Length, na.rm = TRUE)
 
@@ -44,43 +47,67 @@ pngfun(wd = file.path(dir, "plots"), file = file, w = 7, h = 7, pt = 12)
 	plot(data$Length, data$Weight, xlab = "Length (cm)", ylab = "Weight (kg)", main = "All Data", 
 		 ylim = c(0, ymax), xlim = c(0, xmax), pch = 16, col = colors[1])
 
-	if (!is.null(est) & "all" %in% names(est)) {
-
+	if (!is.null(ests) & "all" %in% names(ests)) {
+		lines(lens, ests$all[1] * lens ^ ests$all[2],col = 1, lwd = 2)
+		if (get == 1) {legend("topleft", bty = 'n', legend = unique(data$Sex), lty = 1:3, col = line_col, lwd = 2)}
 	}
 
-	get = 0
+	get = 1
 	for (a in sources){
 		get = get + 1
 		ind = data$Source == a
 		plot(data$Length[ind], data$Weight[ind], xlab = "Length (cm)", ylab = "Weight (kg)", main = a,
 			ylim = c(0, ymax), xlim = c(0, xmax), pch = 16, col = colors[get])
+
+		if (!is.null(ests) & a  %in% names(ests)) {
+			lines(lens, ests[a][[1]][1] * lens ^ ests[a][[1]][2], col = 1, lwd = 2)
+			if (get == 1) {legend("topleft", bty = 'n', legend = unique(data$Sex), lty = 1:3, col = line_col, lwd = 2)}
+		}
 	}	
 dev.off()
 
 file = ifelse(is.null(nm_append), "Length_Weight_by_Sex.png",
 			  paste0("Length_Weight_by_Sex_", nm_append, ".png"))
 
-sex_col = c("red", 'blue', "grey")
+line_col = c("red", 'blue', "grey")
+sex_col = alpha(line_col, 0.20)
 pngfun(wd = file.path(dir, "plots"), file = file, w = 7, h = 7, pt = 12)
-	par(mfrow = c(panels[1], panels[2]*length(unique(data$Sex))) )
-	ind = 0	
-
+	par(mfrow = c(panels[1], panels[2]) )
+		
+	ind = 0
 	for(s in unique(data$Sex)) {
 	ind = ind + 1	
-	plot(data[data$Sex == s, "Length"], data[data$Sex == s, "Weight"], 
-		 xlab = "Length (cm)", ylab = "Weight (kg)", main = paste("All", s), 
-		 ylim = c(0, ymax), xlim = c(0, xmax), pch = 16, col = sex_col[ind])
+	if (ind == 1) {
+		plot(data[data$Sex == s, "Length"], data[data$Sex == s, "Weight"], 
+		 xlab = "Length (cm)", ylab = "Weight (kg)", main = "All Sources", 
+		 ylim = c(0, ymax), xlim = c(0, xmax), pch = 16, col = sex_col[ind]) }
+	if (ind > 1){
+		points(data[data$Sex == s, "Length"], data[data$Sex == s, "Weight"], pch = 16, col = sex_col[ind])
+	}	
+	
+	if (!is.null(ests) & paste0("all_", s)  %in% names(ests)) {
+			lines(lens, ests[paste0("all_", s)][[1]][1] * lens ^ ests[paste0("all_", s)][[1]][2], col = line_col[ind], lwd = 2, lty = ind)
+		if (ind == 1) {legend("topleft", bty = 'n', legend = unique(data$Sex), lty = 1:3, col = line_col, lwd = 2)}
 	}
-
+	} # close sex loop	
 
 	for (a in sources){
 		get = 0
 		for(s in unique(data$Sex)){
 		get = get + 1
 		ind = data$Source == a & data$Sex == s
-		plot(data$Length[ind], data$Weight[ind], xlab = "Length (cm)", ylab = "Weight (kg)", main = paste(a, s),
-			ylim = c(0, ymax), xlim = c(0, xmax), pch = 16, col = sex_col[get])
+		if (get == 1) {
+		plot(data$Length[ind], data$Weight[ind], xlab = "Length (cm)", ylab = "Weight (kg)", main = a,
+			ylim = c(0, ymax), xlim = c(0, xmax), pch = 16, col = sex_col[get]) }
+		if (get > 1){
+		points(data$Length[ind], data$Weight[ind], pch = 16, col = sex_col[get]) }	
+
+		if (!is.null(ests) & paste0(a, "_", s)  %in% names(ests)) {
+			lines(lens, ests[paste0(a,"_", s)][[1]][1] * lens ^ ests[paste0(a, "_", s)][[1]][2], col = line_col[get], lwd = 2, lty = get)
+			if (get == 1) {legend("topleft", bty = 'n', legend = unique(data$Sex), lty = 1:3, col = line_col, lwd = 2)}
 		}
+
+		} # sex loop
 	}	
 
 dev.off()
@@ -94,8 +121,12 @@ pngfun(wd = file.path(dir, "plots"), file = file, w = 7, h = 7, pt = 12)
 	for (a in unique(data$State)){
 		get = get + 1
 		ind = data$State == a
-		plot(data$Length[ind], data$Weight[ind], xlab = "Length (cm)", ylab = "Weight (kg)", main = a,
+		plot(data$Length[ind], data$Weight[ind], xlab = "Length (cm)", ylab = "Weight (kg)", main = paste0(a, " Combined"),
 			ylim = c(0, ymax), xlim = c(0, xmax), pch = 16, col = colors[get])
+
+		if (!is.null(ests) & a  %in% names(ests)) {
+			lines(lens, ests[a][[1]][1] * lens ^ ests[a][[1]][2], col = 1, lwd = 2, lty = 1)
+		}
 	}	
 dev.off()
 
@@ -103,15 +134,25 @@ file = ifelse(is.null(nm_append), "Length_Weight_by_State_Sex.png",
 			  paste0("Length_Weight_by_State_Sex_", nm_append, ".png"))
 
 pngfun(wd = file.path(dir, "plots"), file = file, w = 7, h = 7, pt = 12)
-	par(mfrow = c(length(unique(data$State)), length(unique(data$Sex))))	
+	par(mfrow = c(length(unique(data$State)), 1))	
 	
 	for (a in unique(data$State)){
 		get = 0
 		for (s in unique(data$Sex)){
 			get = get + 1
 			ind = data$State == a & data$Sex == s
-			plot(data$Length[ind], data$Weight[ind], xlab = "Length (cm)", ylab = "Weight (kg)", main = paste(a, s),
-				ylim = c(0, ymax), xlim = c(0, xmax), pch = 16, col = sex_col[get])
+			if (get == 1){
+			plot(data$Length[ind], data$Weight[ind], xlab = "Length (cm)", ylab = "Weight (kg)", main = a,
+				ylim = c(0, ymax), xlim = c(0, xmax), pch = 16, col = sex_col[get]) }
+
+			if (get > 1){
+				points(data$Length[ind], data$Weight[ind], pch = 16, col = sex_col[get]) }
+
+			if (!is.null(ests) & paste0(a, "_", s)  %in% names(ests)) {
+				lines(lens, ests[paste0(a, "-", s)][[1]][1] * lens ^ ests[paste0(a, "-", s)][[1]][2], col = line_col[get], lwd = 2, lty = get)
+				if (get == 1) {legend("topleft", bty = 'n', legend = unique(data$Sex), lty = 1:3, col = line_col, lwd = 2)}
+			}
+
 		}	
 	}
 dev.off()
