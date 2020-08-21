@@ -21,7 +21,14 @@ if(pepr == "Brian"){
   if(species == "quillback"){
     dir = "//nwcfile/FRAM/Assessments/CurrentAssessments/DataModerate_2021/Quillback_Rockfish"
     pacfin_abbr = "QLBK"
-    species_name = "QUILLBACK ROCKFISH"
+    hkl_name = "Quillback Rockfish"
+    recfin_name = "QUILLBACK ROCKFISH"
+  }
+  if(species == "squarespot"){
+    dir = "//nwcfile/FRAM/Assessments/CurrentAssessments/DataModerate_2021/Squarespot_Rockfish"
+    pacfin_abbr = "SQRS"
+    hkl_name = "Squarespot Rockfish"
+    recfin_name = "SQUARESPOT ROCKFISH"
   }
   
   library(nwfscSurvey)
@@ -39,8 +46,8 @@ if(pepr == "Brian"){
 
 ##PacFIN
 if(pepr == "Chantel") load(file.path(dir, "data", "commercial_comps", "PacFIN.COPP.bds.13.Aug.2020.RData"))
-if(pepr == "Brian") load(file.path(dir, "data", "PacFIN BDS", "PacFIN.QLBK.bds.13.Aug.2020.RData"))
-pacfin 	 = PacFIN.QLBK.bds.13.Aug.2020
+if(pepr == "Brian") load(file.path(dir, "data", "PacFIN BDS", paste0("PacFIN.",pacfin_abbr,".bds.13.Aug.2020.RData")))
+pacfin 	 = eval(as.name(paste0("PacFIN.",pacfin_abbr,".bds.13.Aug.2020")))
 Pdata = cleanPacFIN(Pdata = pacfin, 
 					keep_length_type = c("", "A", "F", "U", "T", NA),
 					keep_missing_lengths = FALSE,
@@ -51,7 +58,7 @@ if(pepr == "Chantel") recfin = read.csv(file.path(dir, "data", "recreational_com
 if(pepr == "Brian") {
   recfin = load(file.path(dir, "data", "RecFIN Sample Data", "wetzel_comp_bio_age_inventory_20200117.RData"))
   recfin = rbind(wa,or,ca)
-  recfin = recfin[recfin$SPECIES_NAME == "QUILLBACK ROCKFISH", ]
+  recfin = recfin[recfin$SPECIES_NAME == recfin_name, ]
 }
   
 ##Hook and Line survey
@@ -61,7 +68,7 @@ if(pepr == "Chantel") {
 }
 if(pepr == "Brian") {
   hkl = read.csv(file.path(dir, "data", "NWFSC Hook & Line", "qryGrandUnifiedThru2019_06182020.csv"))
-  sub_hkl = hkl[hkl$COMNAME == 'Quillback Rockfish', ]
+  sub_hkl = hkl[hkl$COMNAME == hkl_name, ]
 }
 
 ##Combo Survey
