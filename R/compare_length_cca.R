@@ -24,7 +24,7 @@ compare_length_cca <- function(dir, data, file = "hkl_cca_comparison", xlim = NU
   pngfun(wd = file.path(dir, "plots"), file = paste0(file, '.png'), w = 7, h = 7, pt = 12)
 
   par(mfcol = c(9, 2),
-      mar = c(0.2,0.2,0.2,0.2),
+      mar = c(0.5, 0.5, 0.5, 0.5),
       oma = c(4,4,1,1))
 
   years <- sort(unique(sub_data$Year))
