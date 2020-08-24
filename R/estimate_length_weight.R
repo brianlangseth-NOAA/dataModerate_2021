@@ -11,9 +11,18 @@
 #'
 estimate_length_weight <- function(data, grouping = "all"){
 
-	n_sex = unique(data$Sex)
-	n_state = unique(data$State)
-	n_source = unique(data$Source)
+	remove = NULL
+	# Determine if all data sources have lengths & weights
+	for (s in unique(data$Source)){
+		check_len  <- check <- sum( !is.na( data[data$Source == s, "Length"])) == 0
+		check_wght <- sum( !is.na( data[data$Source == s, "Weight"])) == 0
+		if (check_len | check_wght) {remove <- c(remove, s)}
+	}
+
+	data <- data[!data$Source %in% remove, ]
+	n_sex <- unique(data$Sex)
+	n_state <- unique(data$State)
+	n_source <- unique(data$Source)
 
 
 	len_weight_list <- list()
