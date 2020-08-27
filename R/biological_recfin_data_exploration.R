@@ -19,6 +19,15 @@ analyze.recfin("QUILLBACK ROCKFISH",
                vonbK = 0.07,
                t0 = -6.8)
 
+analyze.budrick.recfin("QUILLBACK ROCKFISH",
+                       "L://Assessments//CurrentAssessments//DataModerate_2021//Data_From_States//data_from_Budrick",
+                       maxa = 90,
+                       alpha = 0.1/1000,
+                       beta = 2.5,
+                       linf = 41.8,
+                       vonbK = 0.07,
+                       t0 = -6.8)
+
 analyze.recfin <- function(species, directory, maxa, alpha, beta, linf, vonbK , t0) {
   
   library(ggplot2)
@@ -144,6 +153,122 @@ analyze.recfin <- function(species, directory, maxa, alpha, beta, linf, vonbK , 
   		  geom_histogram() + #facet_grid(~ RECFIN_YEAR) + 
   		  facet_wrap(facets = c("RECFIN_YEAR", "AGENCY"), nrow = 12, ncol = 5) +
   		  theme_bw() + stat_bin(bins = 60, binwidth = 2))
+    dev.off()
+  }
+}
+
+rename_budrick_recfin <- function(data){
+  
+  #Rename variables to match recfin pulls
+  names(data)[which(names(data)=="Species.Name")] <- "SPECIES_NAME"
+  names(data)[which(names(data)=="RecFIN.Port.Name")] <- "RECFIN_PORT_NAME"
+  names(data)[which(names(data)=="Agency.Length")] <- "AGENCY_LENGTH"
+  names(data)[which(names(data)=="Agency.Length.Units")] <- "AGENCY_LENGTH_UNITS"
+  names(data)[which(names(data)=="RecFIN.Length.MM")] <- "RECFIN_LENGTH_MM"
+  names(data)[which(names(data)=="Agency.Weight")] <- "AGENCY_WEIGHT"
+  names(data)[which(names(data)=="Agency.Weight.Units")] <- "AGENCY_WEIGHT_UNITS"
+  names(data)[which(names(data)=="RecFIN.Imputed.Weight.KG")] <- "RECFIN_IMPUTED_WEIGHT_KG"
+  names(data)[which(names(data)=="RecFIN.Year")] <- "RECFIN_YEAR"
+  
+  return(data)
+}
+
+
+analyze.budrick.recfin <- function(species, directory, maxa, alpha, beta, linf, vonbK , t0) {
+  
+  library(ggplot2)
+  options(stringsAsFactors = TRUE)
+  #library(HandyCode)
+  
+  #Set directory
+  dir <- directory
+  setwd(dir)
+  
+  species_name <- tolower(species)
+  
+  #Read in full data scripts
+  #Need to use "-" as NA or else conversion of weight from string to numeric is problematic
+  cadata <- read.csv("ca_rec_lengths_all_2004-2019.csv",header=T, na.strings = "-")
+
+  #Rename variables
+  cadata <- rename_budrick_recfin(cadata)
+  
+  ###########################################################################
+  #Set up lengths and weights
+  ###########################################################################
+  
+  #Use only data from desired species (squarespot dont show up in wa or or)
+  all <- cadata[cadata$SPECIES_NAME %in% species, ]
+  
+  # Will likely want to have a split North & South of Point Conception
+  all$area <- NA
+  find <- c(grep("SOUTH", all$RECFIN_PORT_NAME), grep("CHANNEL", all$RECFIN_PORT_NAME))
+  all$area[find] <- "ca_s_pt_c"
+  all$area[-find] <- "ca_n_pt_c"
+  
+  # Remove improper areas (non ocean or not known areas)
+  # All of Washington records are from "NOT KNOWN" areas so keeping those
+  all <- all[grepl("OCEAN", all$Agency.Water.Area.Name) | grepl("NOT KNOWN", all$Agency.Water.Area.Name), ]
+  
+  # Determine the right lengths in cm
+  all <- all[!is.na(all$AGENCY_LENGTH),]
+  # Now determine the lengths in cm
+  all$length_cm <- NA
+  find <- all$AGENCY_LENGTH_UNITS == "M"
+  all$length_cm[find] <- all$AGENCY_LENGTH[find] / 10
+  find <- all$AGENCY_LENGTH_UNITS == "" & all$AGENCY_LENGTH > 100
+  all$length_cm[find] <- all$AGENCY_LENGTH[find] / 10
+  find <- is.na(all$length_cm)
+  all$length_cm[find] <- all$RECFIN_LENGTH_MM[find] / 10 #If no info, then use assumption by RecFIN
+  print("Quantiles of lengths (cm):")
+  print(quantile(all$length_cm))
+  
+  # Determine the weights in kg
+  all$weight_kg <- all$AGENCY_WEIGHT #All weights are less than 25
+  plot(all$weight_kg, all$RECFIN_IMPUTED_WEIGHT_KG)
+  
+  #Output table of sample size of lengths by year and retained status
+  print("Number of lengths by year and retained status")
+  print(table(all$RECFIN_YEAR,all$Is.Retained))
+  
+  #Output table of sample size of lengths by year and retained status
+  print("Number of lengths by year and area")
+  print(table(all$RECFIN_YEAR,all$area))
+  
+  
+  ##########################################################################
+  # Length-weight relationship and Length Comps
+  ##########################################################################
+  
+  #Predicted weight based on W-L relationship for TL in cm to kg
+  all$pred_wght = NA
+  all$pred_wght = alpha * all$length_cm ^ beta
+  
+  cols <- c("red", "orange")
+  cols <- adjustcolor(cols, alpha.f <- 0.40)
+  
+  maxL = quantile(all$length_cm, 0.9999)
+  maxW = quantile(all$weight_kg, 1, na.rm = TRUE)
+  
+  #Plot of W-L across areas
+  png(filename = paste0(strsplit(species_name," ")[[1]][1],'_biology_budrick_recfin.png'), height = 7, width = 7, units = "in", res = 300)
+  par(mfrow = c(2,1))
+  plot(0, type="n", ylim = c(0, maxW), xlim = c(0, maxL), col = cols[1], xlab = "Length (cm)", ylab = "Weight (kg)", main = species_name)
+  for(i in 1:length(unique(all$area))){
+    find = all$area == unique(all$area)[i] & all$weight_kg != 0
+    points(all[find, "length_cm"], all[find, "weight_kg"], col = cols[i], pch = 16)
+  }
+  legend("topleft", legend = c("South CA", "North CA"), bty = 'n', col = cols, pch = 16)
+  dev.off()
+  
+  # Evaluate the available length samples by area
+  for(i in 1:length(unique(all$area))){
+    png(filename = paste0(strsplit(species_name," ")[[1]][1],"_samples_",unique(all$area)[i],"_budrick_recfin.png"), height = 7, width = 7, units = "in", res = 300)
+    find = all$area == unique(all$area)[i]
+    print(ggplot(all[find,], aes(x = length_cm)) + 
+            geom_histogram() + #facet_grid(~ RECFIN_YEAR) + 
+            facet_wrap(facets = c("RECFIN_YEAR"), nrow = 12, ncol = 5) +
+            theme_bw() + stat_bin(bins = 60, binwidth = 2))
     dev.off()
   }
 }
