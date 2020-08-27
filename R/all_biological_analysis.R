@@ -67,7 +67,7 @@ if(pepr == "Chantel") {
   sub_hkl = hkl[hkl$COMNAME == 'Copper Rockfish', ]
 }
 if(pepr == "Brian") {
-  hkl = read.csv(file.path(dir, "data", "NWFSC Hook & Line", "qryGrandUnifiedThru2019_06182020.csv"))
+  hkl = read.csv(file.path(dir, "data", "Hook Line Data", "qryGrandUnifiedThru2019_06182020.csv"))
   sub_hkl = hkl[hkl$COMNAME == hkl_name, ]
 }
 
@@ -102,7 +102,7 @@ out = create_data_frame(data_list = input, areas = NA)
 #	Plot length-at-weight data by source and year
 ############################################################################################
 if(pepr == "Chantel") length_weight_plot(dir = file.path(dir, "data", "biology"), data = out)
-if(pepr == "Brian") length_weight_plot(dir = file.path(dir, "data"), data = out, haveHandy = FALSE)
+if(pepr == "Brian") length_weight_plot(dir = file.path(dir, "data"), data = out, nm_append = NULL, haveHandy = FALSE)
 
 
 
@@ -115,5 +115,6 @@ save(est_growth, file = file.path(dir, "data", "biology", "growth_estimates_surv
 
 length_weight_plot(dir = file.path(dir, "data", "biology"),
 				   nm_append = "Survey", data = survey_dat)
+
 
 
