@@ -25,6 +25,7 @@ rename_survey_data <- function(data){
 	data$Lat  = data$Latitude_dd
 	data$Lon  = data$Longitude_dd
 	data$State  = state
+	data$State_Areas = NA
 	data$Areas  = areas
 	data$Depth  = data$Depth_m
 	data$Sex    = data$Sex

@@ -21,12 +21,12 @@ rename_pacfin <- function(data, area_grouping = NULL, area_names = NULL){
 		     ifelse( data$SOURCE_AGID == "O", "OR",
 		     ifelse( data$SOURCE_AGID == "W", "WA", "OTHER")))
 	
-	areas <- NA
+	state_areas <- NA
 	if(!is.null(area_grouping)){
 		for (a in 1:length(area_grouping)){
 			get <- paste(area_grouping[[a]], collapse = "|")
 			find = grep(get, data$PCID, ignore.case = TRUE)
-			areas[find] = area_names[a]
+			state_areas[find] = area_names[a]
 		}
 	}  
 
@@ -34,7 +34,8 @@ rename_pacfin <- function(data, area_grouping = NULL, area_names = NULL){
 	data$Lat  = NA
 	data$Lon  = NA
 	data$State  = state
-	data$Areas  = areas
+	data$State_Areas  = state_areas
+	data$Areas  = NA
 	data$Depth  = NA
 	data$Sex    = data$SEX
 	data$Length = data$FISH_LENGTH / 10

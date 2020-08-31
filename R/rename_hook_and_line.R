@@ -19,6 +19,7 @@ rename_hook_and_line <- function(data){
 	data$Lat  = data$LATDD
 	data$Lon  = data$LONDD
 	data$State  = state
+	data$State_Areas = "south_pt_concep"
 	data$Areas  = areas
 	data$Depth  = data$DEPTHM
 	data$Sex    = data$SEX

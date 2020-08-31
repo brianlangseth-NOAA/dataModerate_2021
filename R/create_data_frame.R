@@ -18,6 +18,7 @@ create_data_frame <- function(data_list){
 							Lat = data_list[[a]]$Lat,
 							Lon = data_list[[a]]$Lon,
 							State  = data_list[[a]]$State,
+							State_Areas = data_list[[a]]$State_Areas,
 							Areas  = data_list[[a]]$Areas,
 							Depth  = data_list[[a]]$Depth,
 							Sex    = data_list[[a]]$Sex,

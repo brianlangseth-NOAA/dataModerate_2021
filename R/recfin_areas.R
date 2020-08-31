@@ -18,13 +18,13 @@
 #'
 recfin_areas <- function(data, area_grouping, area_names){
 
-	areas <- NA
+	state_areas <- NA
 	for (a in 1:length(area_grouping)){
 
 		get <- paste(area_grouping[[a]], collapse = "|")
 		find = grep(get, data$RECFIN_PORT_NAME, ignore.case = TRUE)
-		areas[find] = area_names[a]
+		state_areas[find] = area_names[a]
 	}
 	
-	return (areas)
+	return (state_areas)
 }
