@@ -1,10 +1,10 @@
 #' Compare length difference between inside and outside CCA
 #'
-#' @param dir
-#' @param data
-#' @param file
-#' @param xlim
-#' @param ylim
+#' @param dir directory to save plost
+#' @param data dataframe name
+#' @param file specialized file name to use for the figure
+#' @param xlim custom xlim input, otherwise dynamically determined
+#' @param ylim custom ylim input, otherwise dynamically determined
 #'
 #' @return plots
 #'

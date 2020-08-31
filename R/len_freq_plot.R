@@ -1,9 +1,9 @@
 #' Compare length frequencies by data set
 #'
-#' @param dir
+#' @param dir the directory to save the figures
 #' @param data data frame created by create_data_frame
-#' @param xlim
-#' @param ylim
+#' @param xlim custom xlim input, otherwise dynamically determined
+#' @param ylim custom ylim input, otherwise dynamically determined
 #'
 #' @return A data frame 
 #'

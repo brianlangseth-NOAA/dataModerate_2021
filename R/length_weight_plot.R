@@ -2,10 +2,11 @@
 #' single data frame that can be used for biological comparisons acroos
 #' data sources
 #'
-#' @param dir
-#' @param list of data
-#' @param splits
-#' @param ests
+#' @param dir directory of where save save plots
+#' @param data data frame created by the create_data_frame function
+#' @param splits not implemented
+#' @param nm_append text to append to the plot name
+#' @param ests list of estimates created by the estimate_length_weight function
 #'
 #' @return Nothing - plots
 #'

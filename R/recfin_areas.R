@@ -9,7 +9,7 @@
 #' @author Chantel Wetzel
 #' @export
 #'
-#' @example
+#' @examples
 #' recfin_areas(data = recfin,
 #' area_grouping = list(c("CHANNEL", "SOUTH"), c("BAY AREA", "WINE", "CENTRAL", "REDWOOD", "NOT KNOWN")),
 #' area_names = c("south_pt_concep", "north_pt_concep")
