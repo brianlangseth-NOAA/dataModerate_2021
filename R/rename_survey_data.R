@@ -17,7 +17,7 @@ rename_survey_data <- function(data){
 
 	project <- ifelse(unique(data$Project) == "NWFSC.Combo", "NWFSC_WCGBTS",
 		       ifelse(unique(data$Project) == "Triennial", "Triennial",
-		       ifelse(unique(data$Project) == "AFSC.Slope", 'AFSC_Slope',
+		       ifelse(unique(data$Project) == "AK.Slope", 'AFSC_Slope',
 		       ifelse(unique(data$Project) == "NWFSC.Slope", "NWFSC_Slope",
 		       	"Other_Survey"))))
 
