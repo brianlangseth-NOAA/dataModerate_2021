@@ -1,43 +1,39 @@
+########################################
+#Script to assess biological data patterns 
+#for length, age, and weight. Also to output
+#tables for number of data entries
+#
+#Author: Brian Langseth, Chantel Wetzel
+#
+#Updated: 9/18/2020
+#########################################
 
-pepr = "Chantel"
-pepr = "Brian"
+#devtools::install_github("brianlangseth-NOAA/dataModerate_2021")
+library(dataModerate2021)
+library(nwfscSurvey)
+library(PacFIN.Utilities)
+library(ggplot2)
 
 species = "quillback"
 species = "squarespot"
 
-if(pepr == "Chantel") { 
-  dir = "//nwcfile/FRAM/Assessments/CurrentAssessments/DataModerate_2021/copper_rockfish" 
-  
-  devtools::load_all("C:/Users/Chantel.Wetzel/Documents/GitHub/nwfscSurvey")
-  devtools::load_all("C:/Users/Chantel.Wetzel/Documents/GitHub/PacFIN.Utilities")
-  devtools::load_all("C:/Users/Chantel.Wetzel/Documents/GitHub/HandyCode")
-  
-  source("C:/Users/Chantel.Wetzel/Documents/GitHub/dataModerate_2021/R/create_data_frame.R")
-  source("C:/Users/Chantel.Wetzel/Documents/GitHub/dataModerate_2021/R/length_weight_plot.R")
-  source("C:/Users/Chantel.Wetzel/Documents/GitHub/dataModerate_2021/R/estimate_length_weight.R")
+if(species == "quillback"){
+  dir = "//nwcfile/FRAM/Assessments/CurrentAssessments/DataModerate_2021/Quillback_Rockfish"
+  pacfin_abbr = "QLBK"
+  hkl_name = "Quillback Rockfish"
+  recfin_name = "QUILLBACK ROCKFISH"
+}
+if(species == "squarespot"){
+  dir = "//nwcfile/FRAM/Assessments/CurrentAssessments/DataModerate_2021/Squarespot_Rockfish"
+  pacfin_abbr = "SQRS"
+  hkl_name = "Squarespot Rockfish"
+  recfin_name = "SQUARESPOT ROCKFISH"
 }
 
-if(pepr == "Brian"){
-  if(species == "quillback"){
-    dir = "//nwcfile/FRAM/Assessments/CurrentAssessments/DataModerate_2021/Quillback_Rockfish"
-    pacfin_abbr = "QLBK"
-    hkl_name = "Quillback Rockfish"
-    recfin_name = "QUILLBACK ROCKFISH"
-  }
-  if(species == "squarespot"){
-    dir = "//nwcfile/FRAM/Assessments/CurrentAssessments/DataModerate_2021/Squarespot_Rockfish"
-    pacfin_abbr = "SQRS"
-    hkl_name = "Squarespot Rockfish"
-    recfin_name = "SQUARESPOT ROCKFISH"
-  }
   
-  library(nwfscSurvey)
-  library(PacFIN.Utilities)
-  
-  source("U:\\Stock assessments\\dataModerate_2021\\R\\create_data_frame.R")
-  source("U:\\Stock assessments\\dataModerate_2021\\R\\length_weight_plot.R")
-  source("U:\\Stock assessments\\dataModerate_2021\\R\\estimate_length_weight.R")
-}
+  #source("U:\\Stock assessments\\dataModerate_2021\\R\\create_data_frame.R")
+  #source("U:\\Stock assessments\\dataModerate_2021\\R\\length_weight_plot.R")
+  #source("U:\\Stock assessments\\dataModerate_2021\\R\\estimate_length_weight.R")
 
 
 ############################################################################################
@@ -45,64 +41,77 @@ if(pepr == "Brian"){
 ############################################################################################
 
 ##PacFIN
-if(pepr == "Chantel") load(file.path(dir, "data", "commercial_comps", "PacFIN.COPP.bds.13.Aug.2020.RData"))
-if(pepr == "Brian") load(file.path(dir, "data", "PacFIN BDS", paste0("PacFIN.",pacfin_abbr,".bds.13.Aug.2020.RData")))
+load(file.path(dir, "data", "PacFIN BDS", paste0("PacFIN.",pacfin_abbr,".bds.13.Aug.2020.RData")))
 pacfin 	 = eval(as.name(paste0("PacFIN.",pacfin_abbr,".bds.13.Aug.2020")))
-Pdata = cleanPacFIN(Pdata = pacfin, 
-					keep_length_type = c("", "A", "F", "U", "T", NA),
-					keep_missing_lengths = FALSE,
-					keep_INPFC = c("VUS","CL","VN","COL","NC","SC","EU","CP","EK","MT","PS"))
 
 ##RecFIN
-if(pepr == "Chantel") recfin = read.csv(file.path(dir, "data", "recreational_comps", "SD001-WASHINGTON-OREGON-CALIFORNIA-1980-2019.csv"))
-if(pepr == "Brian") {
-  recfin = load(file.path(dir, "data", "RecFIN Sample Data", "wetzel_comp_bio_age_inventory_20200117.RData"))
-  recfin = rbind(wa,or,ca)
-  recfin = recfin[recfin$SPECIES_NAME == recfin_name, ]
+#California
+ca_recfin = rename_budrick_recfin(read.csv("//nwcfile/FRAM/Assessments/CurrentAssessments/DataModerate_2021/Data_From_States/ca/ca_rec_lengths_2004_2020_updated.csv", header=T, na.strings = "-"))
+#Washignton
+if(species == "quillback"){
+  wa_recfin = rename_wa_recfin(read.csv(paste0("//nwcfile/FRAM/Assessments/CurrentAssessments/DataModerate_2021/Data_From_States/wa/wa_rec_bds_",species,".csv"), header = T, na.strings = "-"))
 }
+if(species == "squarespot") { wa_recfin = NULL }
+#Oregon
+or_recfin = NULL
+#Combine
+rec_fields = c("RECFIN_YEAR", "STATE_NAME", "FISH_SEX", "RECFIN_LENGTH_MM", "AGENCY_WEIGHT", "FISH_AGE", "IS_RETAINED", "SPECIES_NAME", "RECFIN_PORT_NAME")
+recfin = rbind(wa_recfin[,which(names(wa_recfin) %in% rec_fields)], or_recfin[,which(names(or_recfin) %in% rec_fields)], ca_recfin[,which(names(ca_recfin) %in% rec_fields)])
+#Use only desired species
+recfin = recfin[recfin$SPECIES_NAME == recfin_name, ]
+
+# ##Research - CONTINUE
+# if(species == "quillback"){
+#   wa_research = read.csv(paste0("//nwcfile/FRAM/Assessments/CurrentAssessments/DataModerate_2021/Data_From_States/wa/wa_research_bds_",species,".csv"),header=T)
+#   
+# }
+# if(species == "squarespot") { wa_research = NULL }
+# 
+# 
+# ##MRFSS - CONTINUE
+
+
   
 ##Hook and Line survey
-if(pepr == "Chantel") {
-  hkl = read.csv(file.path(dir, "data", "survey_comps", "qryGrandUnifiedThru2019_06182020.csv"))
-  sub_hkl = hkl[hkl$COMNAME == 'Copper Rockfish', ]
-}
-if(pepr == "Brian") {
-  hkl = read.csv(file.path(dir, "data", "Hook Line Data", "qryGrandUnifiedThru2019_06182020.csv"))
-  sub_hkl = hkl[hkl$COMNAME == hkl_name, ]
-}
+hkl = read.csv(file.path(dir, "data", "Hook Line Data", "qryGrandUnifiedThru2019_06182020.csv"))
+sub_hkl = hkl[hkl$COMNAME == hkl_name, ]
+
 
 ##Combo Survey
-if(pepr == "Chantel") load(file.path(dir, "data", "survey_comps", "Bio_All_NWFSC.Combo_2020-08-14.rda"))
-if(pepr == "Brian") {
-  load(file.path(dir, "data", "Trawl Survey Bio", "Bio_All_NWFSC.Combo_2020-07-30.rda"))
-  combo = Data
-  rm(Data)
-}
+load(file.path(dir, "data", "Trawl Survey Bio", "Bio_All_NWFSC.Combo_2020-07-30.rda"))
+combo = Data
+rm(Data)
+
 
 ##Triennial Survey
-if(pepr == "Brian") {
-  load(file.path(dir, "data", "Trawl Survey Bio", "Bio_All_Triennial_2020-07-30.rda"))
-  trien = Data
-  rm(Data)
-}
+load(file.path(dir, "data", "Trawl Survey Bio", "Bio_All_Triennial_2020-07-30.rda"))
+trien = Data
+rm(Data)
 
 input = list()
-input[[1]] = combo
-input[[2]] = Pdata
-input[[3]] = recfin
-input[[4]] = sub_hkl
-input[[5]] = trien
+input[[1]] = rename_survey_data(combo)
+input[[2]] = rename_pacfin(Pdata)
+input[[3]] = rename_recfin(recfin, area_grouping = list(c("CHANNEL", "SOUTH"), c("BAY AREA", "WINE", "CENTRAL", "REDWOOD", "NOT KNOWN")),
+                           area_names = c("south_pt_concep", "north_pt_concep"))
+input[[4]] = rename_survey_data(sub_hkl)
+input[[5]] = rename_survey_data(trien[[1]])
 
 ############################################################################################
 #	Create data frame with all the input data
 ############################################################################################
-out = create_data_frame(data_list = input, areas = NA)
+out = create_data_frame(data_list = input)
+
+
+############################################################################################
+#	Summarize all of the input data
+############################################################################################
+summarize_data(dir = paste0(dir,"/data/plots"), data = out)
+
 
 ############################################################################################
 #	Plot length-at-weight data by source and year
 ############################################################################################
-if(pepr == "Chantel") length_weight_plot(dir = file.path(dir, "data", "biology"), data = out)
-if(pepr == "Brian") length_weight_plot(dir = file.path(dir, "data"), data = out, nm_append = NULL, haveHandy = FALSE)
+length_weight_plot(dir = file.path(dir, "data"), splits = NA, data = out, nm_append = NULL, est = NULL)
 
 
 
