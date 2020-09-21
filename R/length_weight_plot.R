@@ -61,7 +61,7 @@ pngfun(wd = file.path(dir, "plots"), file = file, w = 7, h = 7, pt = 12)
 	for (a in sources){
 		ind = data$Source == a
 		plot(data$Length[ind], data$Weight[ind], xlab = "Length (cm)", ylab = "Weight (kg)", main = a,
-			ylim = c(0, ymax), xlim = c(0, xmax), pch = 16, col = colors[a])
+			ylim = c(0, ymax), xlim = c(0, xmax), pch = 16, col = colors[which(a %in% sources)])
 
 		if (!is.null(ests) & a  %in% names(ests)) {
 			lines(lens, ests[a][[1]][1] * lens ^ ests[a][[1]][2], col = 1, lwd = 2)
