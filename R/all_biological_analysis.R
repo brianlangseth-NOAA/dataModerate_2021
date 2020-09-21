@@ -30,10 +30,8 @@ if(species == "squarespot"){
   recfin_name = "SQUARESPOT ROCKFISH"
 }
 
-  
-  #source("U:\\Stock assessments\\dataModerate_2021\\R\\create_data_frame.R")
-  #source("U:\\Stock assessments\\dataModerate_2021\\R\\length_weight_plot.R")
-  #source("U:\\Stock assessments\\dataModerate_2021\\R\\estimate_length_weight.R")
+source("U:\\Stock assessments\\dataModerate_2021\\R\\pngfun.R")
+source("U:\\Stock assessments\\dataModerate_2021\\R\\rich_colors_short.R")
 
 
 ############################################################################################
@@ -90,7 +88,7 @@ rm(Data)
 
 input = list()
 input[[1]] = rename_survey_data(combo)
-input[[2]] = rename_pacfin(Pdata)
+input[[2]] = rename_pacfin(pacfin)
 input[[3]] = rename_recfin(recfin, area_grouping = list(c("CHANNEL", "SOUTH"), c("BAY AREA", "WINE", "CENTRAL", "REDWOOD", "NOT KNOWN")),
                            area_names = c("south_pt_concep", "north_pt_concep"))
 input[[4]] = rename_survey_data(sub_hkl)
@@ -111,8 +109,14 @@ summarize_data(dir = paste0(dir,"/data/plots"), data = out)
 ############################################################################################
 #	Plot length-at-weight data by source and year
 ############################################################################################
+source("U:\\Stock assessments\\dataModerate_2021\\R\\length_weight_plot.R")
 length_weight_plot(dir = file.path(dir, "data"), splits = NA, data = out, nm_append = NULL, est = NULL)
 
+
+############################################################################################
+#	Plot length by depth plot by source and year
+############################################################################################
+length_weight_plot(dir = file.path(dir, "data"), splits = NA, data = out, nm_append = NULL, est = NULL)
 
 
 ############################################################################################
