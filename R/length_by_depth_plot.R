@@ -12,32 +12,41 @@
 #'
 length_by_depth_plot <- function(dir, data, xlim = NULL, ylim = NULL){
 
-	dir.create(file.path(dir, "plots"), showWarnings = FALSE)
+    dir.create(file.path(dir, "plots"), showWarnings = FALSE)
 
-  sub_data = data[data$Source %in% c("Triennial", "NWFSC.Combo", "nwfsc_hkl", "NWFSC.Slope"), ]
+  	#sub_data = data[data$Source %in% c("Triennial", "NWFSC_WCGBTS", "NWFSC_Slope", "AKFS_Slope"), ]
 	remove = NULL
 	# Determine if all data sources have lengths 
 	for (s in unique(data$Source)){
-		check_len  <- check <- sum( !is.na( sub_data[sub_data$Source == s, "Length"])) == 0
-		if (check_len) {remove <- c(remove, s)}
+		check  <-  which(is.na( data[data$Source == s, "Length"]) | is.na( data[data$Source == s, "Depth"]) ) 
+		if (length(check) > 0) { remove <- c(remove, check) }
 	}
 	
-	sub_data <- sub_data[!sub_data$Source %in% remove, ]
+	if(length(remove) > 0) { 
+		sub_data <- data[-remove, ]
+	}else{
+		sub_data <- data
+	}
 
 	sources = unique(sub_data$Source)
-	panels = c(length(sources), 1)
 
-	colvec <- c(rgb(1, 0, 0, alpha = 0.4), 
-				      rgb(0, 0, 1, alpha = 0.4),
-				      rgb(0, 0, 0, alpha = 0.25))
+	if (length(sources) > 3){
+		panels = c(length(sources) / 2, 2)
+	}else{
+		panels = c(length(sources), 1)
+	}
+	
+	colvec <- c(rgb(1, 0, 0, alpha = 0.2), 
+				rgb(0, 0, 1, alpha = 0.2),
+				rgb(0, 0, 0, alpha = 0.2))
 
 	if(is.null(xlim)) { 
 		xlim = c(floor(min(sub_data[,"Depth"], na.rm = TRUE)), ceiling(max(sub_data[,"Depth"], na.rm = TRUE) ))
 	}
   
-  if(is.null(ylim)) { 
-    ylim = c(floor(min(sub_data[,"Length"], na.rm = TRUE)), ceiling(max(sub_data[,"Length"], na.rm = TRUE) ))
-  }
+  	if(is.null(ylim)) { 
+    	ylim = c(floor(min(sub_data[,"Length"], na.rm = TRUE)), ceiling(max(sub_data[,"Length"], na.rm = TRUE) ))
+    }
 	
 	pngfun(wd = file.path(dir, "plots"), file = "Length_by_Depth_by_Source.png", w = 7, h = 7, pt = 12)
 

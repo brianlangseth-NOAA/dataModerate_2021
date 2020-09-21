@@ -32,13 +32,20 @@ length_freq_plot <- function(dir, data, xlim = NULL, ylim = NULL){
 	if (n == 5) { panels = c(3, 2)}
 
 	colvec <- c(rgb(1, 0, 0, alpha = 0.8), 
-				rgb(0, 0, 1, alpha = 0.5),
-				rgb(0, 0, 0, alpha = 0.25))
+				      rgb(0, 0, 1, alpha = 0.5),
+				      rgb(0, 0, 0, alpha = 0.25))
+
 
 	if(is.null(xlim)) { 
 		xlim = c(min(sub_data[,"Length"], na.rm = TRUE), ceiling(max(sub_data[,"Length"], na.rm = TRUE) ))
 	}
-  	if(is.null(ylim)) { ylim = c(0, 0.25) }
+  if(is.null(ylim)) { ylim = c(0, 0.25) }
+
+  step <- 2
+  if(xlim[2] - xlim[1] > 80) { step <- 4 }  
+
+  bins <- seq(xlim[1], xlim[2], step)
+  if(max(bins) < xlim[2]) { bins <- c(bins, max(bins) + step) }
 	
 	pngfun(wd = file.path(dir, "plots"), file = "Length_by_Source.png", w = 7, h = 7, pt = 12)
 
@@ -68,7 +75,7 @@ length_freq_plot <- function(dir, data, xlim = NULL, ylim = NULL){
   	  grid()	
   	  
   	  axis(2, las = 1)
-	  axis(1)
+	    axis(1)
 	
   	  male_len <- sub_data$Length[sub_data$Source == y & sub_data$Sex == "M"]
   	  fem_len  <- sub_data$Length[sub_data$Source == y & sub_data$Sex == "F"]
@@ -76,21 +83,21 @@ length_freq_plot <- function(dir, data, xlim = NULL, ylim = NULL){
 	
 	  if (length(fem_len) > 0) {
   	  hist(fem_len,
-  	       breaks = seq(xlim[1], xlim[2], 2),
+  	       breaks = bins,
   	       freq = FALSE,
   	       col = colvec[1],
   	       add = TRUE)
   	  }
   	  if (length(male_len) > 0) {
   	    hist(male_len,
-  	         breaks = seq(xlim[1], xlim[2], 2),
+  	         breaks = bins,
   	         freq = FALSE,
   	         col = colvec[2],
   	         add = TRUE)
   	  }
   	  if (length(unsex_len) > 0) {
   	    hist(unsex_len,
-  	         breaks = seq(xlim[1], xlim[2], 2),
+  	         breaks = bins,
   	         freq = FALSE,
   	         col = colvec[3],
   	         add = TRUE)
