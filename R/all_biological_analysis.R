@@ -32,7 +32,11 @@ if(species == "squarespot"){
 
 source("U:\\Stock assessments\\dataModerate_2021\\R\\pngfun.R")
 source("U:\\Stock assessments\\dataModerate_2021\\R\\rich_colors_short.R")
-
+source("U:\\Stock assessments\\dataModerate_2021\\R\\VB_functions.R")
+source("U:\\Stock assessments\\dataModerate_2021\\R\\estimate_length_age.R")
+source("U:\\Stock assessments\\dataModerate_2021\\R\\length_by_depth_plot.R")
+source("U:\\Stock assessments\\dataModerate_2021\\R\\length_age_plot.R")
+source("U:\\Stock assessments\\dataModerate_2021\\R\\compare_length_cca.R")
 
 ############################################################################################
 #	Load Data
@@ -109,30 +113,32 @@ summarize_data(dir = paste0(dir,"/data/plots"), data = out)
 ############################################################################################
 #	Plot length-at-weight data by source and year
 ############################################################################################
-length_weight_plot(dir = file.path(dir, "data"), splits = NA, data = out, nm_append = NULL, est = NULL)
+lw_ests <- estimate_length_weight(data = out, grouping = "all")
+length_weight_plot(dir = file.path(dir, "data"), splits = NA, data = out, nm_append = NULL, est = lw_ests)
 
 
 ############################################################################################
 #	Plot length-at-age data by source and year
 ############################################################################################
-length_age_plot(dir = file.path(dir, "data"), splits = NA, data = out, nm_append = NULL, est = NULL)
+la_ests <- estimate_length_age(data = out, grouping = "all")
+length_age_plot(dir = file.path(dir, "data"), splits = NA, data = out, nm_append = NULL, est = la_ests)
 
 
 ############################################################################################
 #	Plot length by depth plot by source and year
 ############################################################################################
-length_weight_plot(dir = file.path(dir, "data"), splits = NA, data = out, nm_append = NULL, est = NULL)
+length_by_depth_plot(dir = file.path(dir, "data"), data = out, xlim = NULL, ylim = NULL)
 
 
 ############################################################################################
-# Estimate Growth Using only Survey data
+#	Plot length frequency plots by source and year
 ############################################################################################
-survey_dat <- out[out$Source %in% c("nwfsc_wcgbts", "nwfsc_hkl"),]
-est_growth <- estimate_length_weight(data = survey_dat)
-save(est_growth, file = file.path(dir, "data", "biology", "growth_estimates_survey.Rdat"))
+length_freq_plot(dir = file.path(dir, "data"), data = out, xlim = NULL, ylim = NULL)
 
-length_weight_plot(dir = file.path(dir, "data", "biology"),
-				   nm_append = "Survey", data = survey_dat)
 
+############################################################################################
+#	Plot length frequency plots in and out of Cowcod Conservation Areas from Hook and Line survey data only
+############################################################################################
+compare_length_cca(dir = file.path(dir, "data"), data = out, file = "hkl_cca_comparison", xlim = NULL, ylim = NULL)
 
 
