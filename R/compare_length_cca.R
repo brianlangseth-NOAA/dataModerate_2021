@@ -13,7 +13,7 @@
 #'
 compare_length_cca <- function(dir, data, file = "hkl_cca_comparison", xlim = NULL, ylim = NULL){
 
-  sub_data = data[data$Source == "nwfsc_hkl",] 
+  sub_data = data[data$Source == "NWFSC_HKL",] 
   if (dim(sub_data)[1] == 0) { stop ("No hook & line data in the data frame.")}
 
 
