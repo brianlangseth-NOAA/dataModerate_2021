@@ -91,7 +91,7 @@ input[[1]] = rename_survey_data(combo)
 input[[2]] = rename_pacfin(pacfin)
 input[[3]] = rename_recfin(recfin, area_grouping = list(c("CHANNEL", "SOUTH"), c("BAY AREA", "WINE", "CENTRAL", "REDWOOD", "NOT KNOWN")),
                            area_names = c("south_pt_concep", "north_pt_concep"))
-input[[4]] = rename_survey_data(sub_hkl)
+input[[4]] = rename_hook_and_line(sub_hkl)
 input[[5]] = rename_survey_data(trien[[1]])
 
 ############################################################################################
@@ -109,8 +109,13 @@ summarize_data(dir = paste0(dir,"/data/plots"), data = out)
 ############################################################################################
 #	Plot length-at-weight data by source and year
 ############################################################################################
-source("U:\\Stock assessments\\dataModerate_2021\\R\\length_weight_plot.R")
 length_weight_plot(dir = file.path(dir, "data"), splits = NA, data = out, nm_append = NULL, est = NULL)
+
+
+############################################################################################
+#	Plot length-at-age data by source and year
+############################################################################################
+length_age_plot(dir = file.path(dir, "data"), splits = NA, data = out, nm_append = NULL, est = NULL)
 
 
 ############################################################################################
