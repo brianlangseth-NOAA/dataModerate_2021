@@ -134,8 +134,10 @@ pngfun(wd = file.path(dir, "plots"), file = file, w = 7, h = 7, pt = 12)
 		} # line loop
 		} # proportion sex loop
 		} # sex loop
-		legend("bottomright", bty = 'n', 
-						legend = leg, lty = 1:get, col = line_col, lwd = 2)
+		if (length(leg) > 0 ) {
+		  legend("bottomright", bty = 'n', 
+		         legend = leg, lty = 1:get, col = line_col, lwd = 2)
+		}
 	} # source loop	
 
 dev.off()
