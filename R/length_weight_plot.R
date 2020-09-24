@@ -33,6 +33,9 @@ if (n == 1) { panels = c(1, 1)}
 if (n == 2) { panels = c(3, 1)}
 if (n == 3) { panels = c(2, 2)}
 if (n == 4) { panels = c(3, 2)}
+if (n == 5) { panels = c(3, 2)}
+if (n == 6) { panels = c(4, 2)}
+if (n == 7) { panels = c(4, 2)}
 
 
 colors = rich.colors.short(n + 2, alpha = 0.4)
