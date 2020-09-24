@@ -14,6 +14,7 @@ summarize_data <- function(dir = NULL, data){
 	summary_list <- list()
 	summary_list$sources <- unique(data$Source) 
 	summary_list$sample_yrs <- table(data$Year, data$Source)
+	summary_list$sample_by_area <- table(data$Year, data$State_Areas)
 
 	
 	place = 1
@@ -56,7 +57,59 @@ summarize_data <- function(dir = NULL, data){
 	}
 	names(data_sum) = sort(unique(data$State))
 	summary_list$ByState = data_sum
-	
+
+
+	place = 1; nm = NULL
+	data_sum <- list()
+	for(t in sort(unique(data$Source))){
+	  for(a in sort(unique(data$State))){
+	  	yrs = sort(unique(data[data$Source == t & data$State == a, "Year"]))
+	  	if (length(yrs) > 0){
+	  		mat = matrix(NA, length(yrs), 3)
+	  		rownames(mat) = yrs
+	  		colnames(mat) = c("Length", 'Weight', 'Age')
+	  		ind = 1
+	  		for( y in yrs){
+	  		  get = which(data$Source == t & data$State == a & data$Year == y)
+	  		  mat[ind,] = c(sum(!is.na(data[get, "Length"])), 
+	  		                sum(!is.na(data[get, "Weight"])),
+	  		                sum(!is.na(data[get, "Age"])) )	
+	  		  ind = ind + 1
+	  		}
+	  		data_sum[[place]] = mat
+	  		place = place + 1
+	  		nm = c(nm, paste0(t, "_", a))
+	  	}
+	  }
+	}
+	names(data_sum) = nm #paste0(sort(unique(data$Source)),"_", sort(unique(data$State)))
+	summary_list$BySource_ByState = data_sum	
+
+	place = 1; nm = NULL
+	data_sum <- list()
+	for(t in sort(unique(data$Source))){
+	  for(a in sort(unique(data$State_Areas))){
+	  	yrs = sort(unique(data[data$Source == t & data$State_Areas == a, "Year"]))
+	  	if (length(yrs) > 0){
+	  		mat = matrix(NA, length(yrs), 3)
+	  		rownames(mat) = yrs
+	  		colnames(mat) = c("Length", 'Weight', 'Age')
+	  		ind = 1
+	  		for( y in yrs){
+	  		  get = which(data$Source == t & data$State_Areas == a & data$Year == y)
+	  		  mat[ind,] = c(sum(!is.na(data[get, "Length"])), 
+	  		                sum(!is.na(data[get, "Weight"])),
+	  		                sum(!is.na(data[get, "Age"])) )	
+	  		  ind = ind + 1
+	  		}
+	  		data_sum[[place]] = mat
+	  		place = place + 1
+	  		nm = c(nm, paste0(t, "_", a))
+	  	}
+	  }
+	}
+	names(data_sum) = nm #paste0(sort(unique(data$Source)),"_", sort(unique(State_Area)))
+	summary_list$BySource_ByArea = data_sum	
 	
 	
 	if(!is.null(dir)){ 
