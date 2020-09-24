@@ -15,14 +15,16 @@ rename_mrfss <- function(data, area_grouping = NULL, area_names = NULL){
 		     ifelse( data$STATE_NAME %in% c("OREGON", "OR", "O"), "OR",
 		     ifelse( data$STATE_NAME %in% c("WASHINGTON", "WA", "W"), "WA", "OTHER")))
 
-	sex <- ifelse(data$F_SEX == 2, "F",
-		   ifelse(data$F_SEX == 1, "M",
-		   		  "U"))
+	sex <- matrix(NA, dim(data)[1], 1)
+	sex[data$F_SEX == 2] = "F"
+	sex[data$F_SEX == 1] = "M"
+	sex[!data$F_SEX %in% c("F", "M")] = "U"
 	
 	if(!is.null(area_grouping)){
 		data$State_Areas = recfin_areas(data = data, 
 									    area_grouping = area_grouping, 
-										area_names = area_names)
+										area_names = area_names,
+										column_name = "DIST")
 	} else {
 		data$State_Areas = NA
 	}
