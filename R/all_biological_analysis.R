@@ -114,14 +114,14 @@ summarize_data(dir = paste0(dir,"/data/plots"), data = out)
 #	Plot length-at-weight data by source and year
 ############################################################################################
 lw_ests <- estimate_length_weight(data = out, grouping = "all")
-length_weight_plot(dir = file.path(dir, "data"), splits = NA, data = out, nm_append = NULL, est = lw_ests)
+length_weight_plot(dir = file.path(dir, "data"), splits = NA, data = out, nm_append = NULL, ests = lw_ests)
 
 
 ############################################################################################
 #	Plot length-at-age data by source and year
 ############################################################################################
 la_ests <- estimate_length_age(data = out, grouping = "all")
-length_age_plot(dir = file.path(dir, "data"), splits = NA, data = out, nm_append = NULL, est = la_ests)
+length_age_plot(dir = file.path(dir, "data"), splits = NA, data = out, nm_append = NULL, ests = la_ests)
 
 
 ############################################################################################
