@@ -14,6 +14,7 @@ summarize_data <- function(dir = NULL, data){
 	summary_list <- list()
 	summary_list$sources <- unique(data$Source) 
 	summary_list$sample_yrs <- table(data$Year, data$Source)
+	summary_list$sample_by_area <- table(data$Year, data$State_Areas)
 
 	
 	place = 1
@@ -56,7 +57,63 @@ summarize_data <- function(dir = NULL, data){
 	}
 	names(data_sum) = sort(unique(data$State))
 	summary_list$ByState = data_sum
-	
+
+
+	place = 1; nm = NULL
+	data_sum <- list()
+	for(a in sort(unique(data$State))){
+		tmp = 0
+		yrs = sort(unique(data[data$State == a, "Year"]))
+		mat_len = mat_age = matrix(NA, length(yrs), length(unique(data$Source)))
+	  	rownames(mat_len) = rownames(mat_age) = yrs
+	  	colnames(mat_len) = colnames(mat_age) = sort(unique(data$Source))
+		for(t in sort(unique(data$Source))){
+			tmp = tmp + 1
+	  		ind = 1
+	  		for( y in yrs){
+	  		  get = which(data$Source == t & data$State == a & data$Year == y)
+	  		  if(length(get) > 0){
+	  		  	mat_len[ind, tmp] = sum(!is.na(data[get, "Length"])) 	
+	  		  	mat_age[ind, tmp] = sum(!is.na(data[get, "Age"]))
+	  		  }
+	  		  ind = ind + 1
+	  		}
+	  	}
+	  	data_sum[[place]] = mat_len
+	  	data_sum[[place + 1]] = mat_age
+	  	place = place + 2
+	  	nm = c(nm,  c(paste0(a, "_length"), paste0(a, "_age")))
+	}
+	names(data_sum) = nm 
+	summary_list$BySource_ByState = data_sum	
+
+	place = 1; nm = NULL
+	data_sum <- list()
+	for(a in sort(unique(data$State_Areas))){
+		tmp = 0
+		yrs = sort(unique(data[data$State_Areas == a, "Year"]))
+		mat_len = mat_age = matrix(NA, length(yrs), length(unique(data$Source)))
+	  	rownames(mat_len) = rownames(mat_age) = yrs
+	  	colnames(mat_len) = colnames(mat_age) = sort(unique(data$Source))
+		for(t in sort(unique(data$Source))){
+			tmp = tmp + 1
+	  		ind = 1
+	  		for( y in yrs){
+	  		  get = which(data$Source == t & data$State_Areas == a & data$Year == y)
+	  		  if(length(get) > 0){
+	  		  	mat_len[ind, tmp] = sum(!is.na(data[get, "Length"])) 	
+	  		  	mat_age[ind, tmp] = sum(!is.na(data[get, "Age"]))
+	  		  }
+	  		  ind = ind + 1
+	  		}
+	  	}
+	  	data_sum[[place]] = mat_len
+	  	data_sum[[place + 1]] = mat_age
+	  	place = place + 2
+	  	nm = c(nm,  c(paste0(a, "_length"), paste0(a, "_age")))
+	}
+	names(data_sum) = nm 
+	summary_list$BySource_ByArea = data_sum	
 	
 	
 	if(!is.null(dir)){ 

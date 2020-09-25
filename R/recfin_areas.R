@@ -3,6 +3,7 @@
 #' @param data read in RecFIN data
 #' @param area_grouping list of area names in data source
 #' @param area_names user area names
+#' @param column_name name to do the grouping with (default is based on recfin)
 #'
 #' @return A data frame 
 #'
@@ -16,13 +17,13 @@
 #' )
 #'
 #'
-recfin_areas <- function(data, area_grouping, area_names){
+recfin_areas <- function(data, area_grouping, area_names, column_name = "RECFIN_PORT_NAME"){
 
 	state_areas <- NA
 	for (a in 1:length(area_grouping)){
 
 		get <- paste(area_grouping[[a]], collapse = "|")
-		find = grep(get, data$RECFIN_PORT_NAME, ignore.case = TRUE)
+		find = grep(get, data[,column_name], ignore.case = TRUE)
 		state_areas[find] = area_names[a]
 	}
 	
