@@ -57,6 +57,16 @@ rename_mrfss <- function(data, area_grouping = NULL, area_names = NULL, len_col 
 		data$State_Areas = NA
 	}
 
+	# Oregon mode codes correspond as: 1 = shore/manmade, 2 = shore/beach bank, 6 = charter, 7 = private boas
+	find = which(colnames(data) %in% c("MRFSS_MODE_FX", "MODE_FX"))
+	modes = NA
+	if (length(find) > 0){
+		modes[data[,find] == 1] = "shore_manmade"
+		modes[data[,find] == 2] = "shore_beachbank"
+		modes[data[,find] == 6] = "charter"
+		modes[data[,find] == 7] = "private_boat"
+	}
+
 	data$Year = year
 	data$Lat = NA
 	data$Lon = NA
@@ -68,7 +78,7 @@ rename_mrfss <- function(data, area_grouping = NULL, area_names = NULL, len_col 
 	data$Length = length
 	data$Weight = weight
 	data$Age    = NA
-	data$Data_Type = NA
+	data$Data_Type = modes
 	data$Source = "RecFIN_MRFSS"	
 
 	return (data)

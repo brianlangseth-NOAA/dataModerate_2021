@@ -29,14 +29,13 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_
 		message("Sex data column not found. Double check file.")
 	}
 	
+	State_Areas = NA
 	if(!is.null(area_grouping)){
 		State_Areas = recfin_areas(data = data, 
 								   area_grouping = area_grouping, 
 								   area_names = area_names,
 								   column_name = column_name)
-	} else {
-		data$State_Areas = NA
-	}
+	} 
 
 	col = which( colnames(data) %in% c("RECFIN_YEAR", "RecFIN.Year"))
 	if (length(col) > 0) {
@@ -46,34 +45,43 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_
 	}	
 
 	col = which( colnames(data) %in% c("RECFIN_LENGTH_MM", "RecFIN.Length.MM"))
+	length = NA
 	if (length(col) > 0) {
 		length = data[,col] / 10
 	} else {
-		length = NA
 		message("Length data column not found. Double check file.")
 	}
 
 	col = which(colnames(data) %in% c("AGENCY_WEIGHT", "Agency.Weight"))
+	weight = NA
 	if (length(col) > 0) {
 		weight = data[,col]
 	} else {
-		weight = NA
 		message("Weight data column not found. Double check file.")
 	}
 
 	col = which(colnames(data) %in% c("IS_RETAINED", "Is.Retained"))
+	retain = NA
 	if (length(col) > 0) {
 		retain = data[,col]
-	} else {
-		retain = NA
-	}
+	} 
 
 	col = which(colnames(data) %in% c("FISH_AGE", "USE_THIS_AGE"))
+	age = NA
 	if (length(col) > 0) {
 		age = data[,col]
-	} else {
-		age = NA
-	}
+	} 
+
+	col = which(colnames(data) %in% c("RecFIN.Mode.Name"))
+	modes = NA
+	if (length(col) > 0){
+		modes[data[,col] == "BEACH/BANK"] = "shore_beachbank"
+		modes[data[,col] == "MAN-MADE/JETTY"] = "shore_manmade"
+		modes[data[,col] == "PARTY/CHARTER BOATS"] = "charter"
+		modes[data[,col] == "PRIVATE/RENTAL BOATS"] = "private"
+		modes[data[,col] == "NOT KNOWN"] = "unknown"
+	} 
+
 
 	data$Year = year
 	data$Lat = NA
@@ -86,6 +94,7 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_
 	data$Length = length
 	data$Weight = weight
 	data$Age    = age
+	data$Fleet  = modes
 	data$Data_Type = retain
 	data$Source = "RecFIN"	
 
