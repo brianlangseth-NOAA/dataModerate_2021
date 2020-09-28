@@ -44,6 +44,7 @@ rename_survey_data <- function(data, area_split, area_names){
 	data$Length = data$Length_cm
 	data$Weight = data$Weight
 	data$Age    = data$Age
+	data$Fleet  = NA
 	data$Data_Type = "RETAINED"
 	data$Source = project	
 

@@ -82,7 +82,6 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_
 		modes[data[,col] == "NOT KNOWN"] = "unknown"
 	} 
 
-
 	data$Year = year
 	data$Lat = NA
 	data$Lon = NA

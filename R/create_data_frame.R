@@ -25,6 +25,7 @@ create_data_frame <- function(data_list){
 							Length = data_list[[a]]$Length,
 							Weight = data_list[[a]]$Weight,
 							Age    = data_list[[a]]$Age,
+							Fleet  = data_list[[a]]$Fleet,
 							Data_Type = data_list[[a]]$Data_Type,
 							Source = data_list[[a]]$Source)
 
