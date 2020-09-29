@@ -26,7 +26,7 @@ rename_hook_and_line <- function(data){
 	data$Length = data$LENGTH
 	data$Weight = data$WEIGHT
 	data$Age    = NA
-	data$Fleet  = NA
+	data$Fleet  = "survey"
 	data$Data_Type = "RETAINED"
 	data$Source = "NWFSC_HKL"	
 
