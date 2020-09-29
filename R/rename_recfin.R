@@ -20,7 +20,7 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_
 		stop("State name column not found. Double check file.")
 	}
 
-	col = which( colnames(data) %in% c("FISH_SEX", "Fish.Sex") )
+	col = which( colnames(data) %in% c("FISH_SEX", "Fish.Sex", "RECFIN_SEX_CODE") )
 	if (length(col) > 0){
 		sex <- ifelse(data[,col] == "F" | data[,col] == 2, "F",
 		   	   ifelse(data[,col] == "M" | data[,col] == 1, "M",
@@ -37,17 +37,17 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_
 								   column_name = column_name)
 	} 
 
-	col = which( colnames(data) %in% c("RECFIN_YEAR", "RecFIN.Year"))
+	col = which( colnames(data) %in% c("RECFIN_YEAR", "RecFIN.Year", "SAMPLE_YEAR"))
 	if (length(col) > 0) {
 		year = data[,col]
 	} else {
 		stop("Year column not found. Double check file.")
 	}	
 
-	col = which( colnames(data) %in% c("RECFIN_LENGTH_MM", "RecFIN.Length.MM"))
+	col = which( colnames(data) %in% c("MEASURED_LENGTH", "RECFIN_LENGTH_MM", "RecFIN.Length.MM"))
 	length = NA
 	if (length(col) > 0) {
-		length = data[,col] / 10
+		length = data[,col[1]] / 10
 	} else {
 		message("Length data column not found. Double check file.")
 	}
@@ -72,14 +72,15 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_
 		age = data[,col]
 	} 
 
-	col = which(colnames(data) %in% c("RecFIN.Mode.Name"))
+	col = which(colnames(data) %in% c("RecFIN.Mode.Name", "RECFIN_MODE_NAME", "boat_mode_code"))
 	modes = NA
 	if (length(col) > 0){
-		modes[data[,col] == "BEACH/BANK"] = "shore_beachbank"
-		modes[data[,col] == "MAN-MADE/JETTY"] = "shore_manmade"
-		modes[data[,col] == "PARTY/CHARTER BOATS"] = "charter"
-		modes[data[,col] == "PRIVATE/RENTAL BOATS"] = "private"
-		modes[data[,col] == "NOT KNOWN"] = "unknown"
+		modes[data[,col] %in% c("BEACH/BANK")] = "shore_beachbank"
+		modes[data[,col] %in% c("MAN-MADE/JETTY")] = "shore_manmade"
+		modes[data[,col] %in% c("PARTY/CHARTER BOATS", "C")] = "charter"
+		modes[data[,col] %in% c("PRIVATE/RENTAL BOATS", "B")] = "private"
+		modes[data[,col] %in% c("NOT KNOWN", "?")] = "unknown"
+		modes[which(is.na(modes))] = "unknown"
 	} 
 
 	data$Year = year
