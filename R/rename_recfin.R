@@ -9,13 +9,13 @@
 #' @author Chantel Wetzel
 #' @export
 #'
-rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_name = "DIST"){
+rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_name = NULL){
 
-	col = which( colnames(data) %in% c("STATE_NAME", "State.Name"))
+	col = which( colnames(data) %in% c("STATE_NAME", "State.Name", "SAMPLING_AGENCY_NAME"))
 	if (length(col) > 0){
-		state <- ifelse( data[,col] %in% c("CALIFORNIA", "CA", "C"), "CA", 
-			     ifelse( data[,col] %in% c("OREGON", "OR", "O"), "OR",
-			     ifelse( data[,col] %in% c("WASHINGTON", "WA", "W"), "WA", "OTHER")))
+		state <- ifelse( data[,col] %in% c("CALIFORNIA", "CA", "C", "CDFW"), "CA", 
+			     ifelse( data[,col] %in% c("OREGON", "OR", "O", "ODFW"), "OR",
+			     ifelse( data[,col] %in% c("WASHINGTON", "WA", "W", "WDFW"), "WA", "OTHER")))
 	} else { 
 		stop("State name column not found. Double check file.")
 	}

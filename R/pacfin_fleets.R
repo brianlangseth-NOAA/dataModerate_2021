@@ -12,13 +12,13 @@
 #'
 #'
 #'
-pacfin_fleets <- function(data, fleet_grouping, fleet_names, fleet_column_name = ""){
+pacfin_fleets <- function(data, fleet_grouping, fleet_names, fleet_column_name){
 
 	fleet <- NA
 	for (a in 1:length(fleet_grouping)){
 		get <- paste(fleet_grouping[[a]], collapse = "|")
 		find = grep(get, data[,fleet_column_name], ignore.case = TRUE)
-		fleet[find] = area_fleets[a]
+		fleet[find] = fleet_names[a]
 	}
 	
 	return (fleet)

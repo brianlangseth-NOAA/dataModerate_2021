@@ -78,7 +78,8 @@ rename_mrfss <- function(data, area_grouping = NULL, area_names = NULL, len_col 
 	data$Length = length
 	data$Weight = weight
 	data$Age    = NA
-	data$Data_Type = modes
+	data$Fleet  = modes 
+	data$Data_Type = NA
 	data$Source = "RecFIN_MRFSS"	
 
 	return (data)

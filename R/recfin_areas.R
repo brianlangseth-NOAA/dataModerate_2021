@@ -17,7 +17,7 @@
 #' )
 #'
 #'
-recfin_areas <- function(data, area_grouping, area_names, column_name = "RECFIN_PORT_NAME"){
+recfin_areas <- function(data, area_grouping, area_names, column_name){
 
 	state_areas <- NA
 	for (a in 1:length(area_grouping)){

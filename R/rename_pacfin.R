@@ -13,7 +13,7 @@
 #' @author Chantel Wetzel
 #' @export
 #'
-rename_pacfin <- function(data, area_grouping = NULL, area_names = NULL, fleet_grouping = NULL, fleet_names = NULL, fleet_column_names = "GEAR"){
+rename_pacfin <- function(data, area_grouping = NULL, area_names = NULL, fleet_grouping = NULL, fleet_names = NULL, fleet_column_name = "COND"){
 
 	data <- PacFIN.Utilities::cleanPacFIN(Pdata = data, 
 								  keep_length_type = c("", "A", "F", "U", "T", NA),
@@ -24,11 +24,12 @@ rename_pacfin <- function(data, area_grouping = NULL, area_names = NULL, fleet_g
 		     ifelse( data$SOURCE_AGID == "O", "OR",
 		     ifelse( data$SOURCE_AGID == "W", "WA", "OTHER")))
 
+	fleets <- NA
 	if(!is.null(fleet_grouping)){
 	fleets = pacfin_fleets(data = data, 
 						   fleet_grouping = fleet_grouping, 
-						   fleet_names = fleet_grouping, 
-						   fleet_column_name = "")
+						   fleet_names = fleet_names, 
+						   fleet_column_name = fleet_column_name)
 	}
 	
 	state_areas <- NA
