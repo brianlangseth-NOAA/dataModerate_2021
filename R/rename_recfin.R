@@ -9,18 +9,19 @@
 #' @author Chantel Wetzel
 #' @export
 #'
-rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_name = "DIST"){
+rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, area_column_name = NULL,
+						  mode_grouping = NULL, mode_names = NULL, mode_column_name = NULL){
 
-	col = which( colnames(data) %in% c("STATE_NAME", "State.Name"))
+	col = which( colnames(data) %in% c("STATE_NAME", "State.Name", "SAMPLING_AGENCY_NAME"))
 	if (length(col) > 0){
-		state <- ifelse( data[,col] %in% c("CALIFORNIA", "CA", "C"), "CA", 
-			     ifelse( data[,col] %in% c("OREGON", "OR", "O"), "OR",
-			     ifelse( data[,col] %in% c("WASHINGTON", "WA", "W"), "WA", "OTHER")))
+		state <- ifelse( data[,col] %in% c("CALIFORNIA", "CA", "C", "CDFW"), "CA", 
+			     ifelse( data[,col] %in% c("OREGON", "OR", "O", "ODFW"), "OR",
+			     ifelse( data[,col] %in% c("WASHINGTON", "WA", "W", "WDFW"), "WA", "OTHER")))
 	} else { 
 		stop("State name column not found. Double check file.")
 	}
 
-	col = which( colnames(data) %in% c("FISH_SEX", "Fish.Sex") )
+	col = which( colnames(data) %in% c("FISH_SEX", "Fish.Sex", "RECFIN_SEX_CODE") )
 	if (length(col) > 0){
 		sex <- ifelse(data[,col] == "F" | data[,col] == 2, "F",
 		   	   ifelse(data[,col] == "M" | data[,col] == 1, "M",
@@ -29,51 +30,69 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_
 		message("Sex data column not found. Double check file.")
 	}
 	
+	State_Areas = NA
 	if(!is.null(area_grouping)){
 		State_Areas = recfin_areas(data = data, 
 								   area_grouping = area_grouping, 
 								   area_names = area_names,
-								   column_name = column_name)
-	} else {
-		data$State_Areas = NA
-	}
+								   column_name = area_column_name)
+	} 
 
-	col = which( colnames(data) %in% c("RECFIN_YEAR", "RecFIN.Year"))
+	col = which( colnames(data) %in% c("RECFIN_YEAR", "RecFIN.Year", "SAMPLE_YEAR"))
 	if (length(col) > 0) {
 		year = data[,col]
 	} else {
 		stop("Year column not found. Double check file.")
 	}	
 
-	col = which( colnames(data) %in% c("RECFIN_LENGTH_MM", "RecFIN.Length.MM"))
+	col = which( colnames(data) %in% c("MEASURED_LENGTH", "RECFIN_LENGTH_MM", "RecFIN.Length.MM"))
+	length = NA
 	if (length(col) > 0) {
-		length = data[,col] / 10
+		length = data[,col[1]] / 10
 	} else {
-		length = NA
 		message("Length data column not found. Double check file.")
 	}
 
 	col = which(colnames(data) %in% c("AGENCY_WEIGHT", "Agency.Weight"))
+	weight = NA
 	if (length(col) > 0) {
 		weight = data[,col]
 	} else {
-		weight = NA
 		message("Weight data column not found. Double check file.")
 	}
 
 	col = which(colnames(data) %in% c("IS_RETAINED", "Is.Retained"))
+	retain = NA
 	if (length(col) > 0) {
 		retain = data[,col]
-	} else {
-		retain = NA
-	}
+	} 
 
 	col = which(colnames(data) %in% c("FISH_AGE", "USE_THIS_AGE"))
+	age = NA
 	if (length(col) > 0) {
 		age = data[,col]
-	} else {
-		age = NA
+	} 
+
+	#col = which(colnames(data) %in% c("RecFIN.Mode.Name", "RECFIN_MODE_NAME", "boat_mode_code"))
+	#modes = NA
+	#if (length(col) > 0){
+	#	modes[data[,col] %in% c("BEACH/BANK")] = "rec_shore_beachbank"
+	#	modes[data[,col] %in% c("MAN-MADE/JETTY")] = "rec_shore_manmade"
+	#	modes[data[,col] %in% c("PARTY/CHARTER BOATS", "C")] = "rec_charter"
+	#	modes[data[,col] %in% c("PRIVATE/RENTAL BOATS", "B")] = "rec_private"
+	#	modes[data[,col] %in% c("NOT KNOWN", "?")] = "rec_unknown"
+	#	modes[which(is.na(modes))] = "rec_unknown"
+	#} 
+
+	mode <- NA
+	if(!is.null(mode_grouping)){
+		for (a in 1:length(mode_grouping)){
+			get <- paste(mode_grouping[[a]], collapse = "|")
+			find = grep(get, data[, mode_column_name], ignore.case = TRUE)
+			mode[find] = mode_names[a]
+		}
 	}
+
 
 	data$Year = year
 	data$Lat = NA
@@ -86,6 +105,7 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_
 	data$Length = length
 	data$Weight = weight
 	data$Age    = age
+	data$Fleet  = mode
 	data$Data_Type = retain
 	data$Source = "RecFIN"	
 
