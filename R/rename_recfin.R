@@ -9,7 +9,8 @@
 #' @author Chantel Wetzel
 #' @export
 #'
-rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_name = NULL){
+rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, area_column_name = NULL,
+						  mode_grouping = NULL, mode_names = NULL, mode_column_name = NULL){
 
 	col = which( colnames(data) %in% c("STATE_NAME", "State.Name", "SAMPLING_AGENCY_NAME"))
 	if (length(col) > 0){
@@ -34,7 +35,7 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_
 		State_Areas = recfin_areas(data = data, 
 								   area_grouping = area_grouping, 
 								   area_names = area_names,
-								   column_name = column_name)
+								   column_name = area_column_name)
 	} 
 
 	col = which( colnames(data) %in% c("RECFIN_YEAR", "RecFIN.Year", "SAMPLE_YEAR"))
@@ -72,16 +73,26 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_
 		age = data[,col]
 	} 
 
-	col = which(colnames(data) %in% c("RecFIN.Mode.Name", "RECFIN_MODE_NAME", "boat_mode_code"))
-	modes = NA
-	if (length(col) > 0){
-		modes[data[,col] %in% c("BEACH/BANK")] = "shore_beachbank"
-		modes[data[,col] %in% c("MAN-MADE/JETTY")] = "shore_manmade"
-		modes[data[,col] %in% c("PARTY/CHARTER BOATS", "C")] = "charter"
-		modes[data[,col] %in% c("PRIVATE/RENTAL BOATS", "B")] = "private"
-		modes[data[,col] %in% c("NOT KNOWN", "?")] = "unknown"
-		modes[which(is.na(modes))] = "unknown"
-	} 
+	#col = which(colnames(data) %in% c("RecFIN.Mode.Name", "RECFIN_MODE_NAME", "boat_mode_code"))
+	#modes = NA
+	#if (length(col) > 0){
+	#	modes[data[,col] %in% c("BEACH/BANK")] = "rec_shore_beachbank"
+	#	modes[data[,col] %in% c("MAN-MADE/JETTY")] = "rec_shore_manmade"
+	#	modes[data[,col] %in% c("PARTY/CHARTER BOATS", "C")] = "rec_charter"
+	#	modes[data[,col] %in% c("PRIVATE/RENTAL BOATS", "B")] = "rec_private"
+	#	modes[data[,col] %in% c("NOT KNOWN", "?")] = "rec_unknown"
+	#	modes[which(is.na(modes))] = "rec_unknown"
+	#} 
+
+	mode <- NA
+	if(!is.null(mode_grouping)){
+		for (a in 1:length(mode_grouping)){
+			get <- paste(mode_grouping[[a]], collapse = "|")
+			find = grep(get, data[, mode_column_name], ignore.case = TRUE)
+			mode[find] = mode_names[a]
+		}
+	}
+
 
 	data$Year = year
 	data$Lat = NA
@@ -94,7 +105,7 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, column_
 	data$Length = length
 	data$Weight = weight
 	data$Age    = age
-	data$Fleet  = modes
+	data$Fleet  = mode
 	data$Data_Type = retain
 	data$Source = "RecFIN"	
 
