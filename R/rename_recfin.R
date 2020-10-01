@@ -100,6 +100,7 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, area_co
 	data$State = state
 	if(or_ages) { data$State = "ORage" }
 	data$State_Areas = State_Areas
+	if(or_ages) { data$State_Areas = "ORage" }
 	data$Areas  = NA
 	data$Depth  = NA
 	data$Sex    = sex
