@@ -56,7 +56,7 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, area_co
 	col = which(colnames(data) %in% c("AGENCY_WEIGHT", "Agency.Weight"))
 	weight = NA
 	if (length(col) > 0) {
-		weight = data[,col]
+		weight = as.numeric(data[,col])
 	} else {
 		message("Weight data column not found. Double check file.")
 	}
