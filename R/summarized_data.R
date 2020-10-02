@@ -16,6 +16,9 @@ summarize_data <- function(dir = NULL, data){
 	summary_list$sample_yrs <- table(data$Year, data$Source)
 	summary_list$sample_by_area <- table(data$Year, data$State_Areas)
 
+	tmp = aggregate(Length ~ State_Areas + Fleet +  Source + Year, data = data, FUN = function(x) sum(!is.na(x)))
+	summary_list$area_fleet_source_year = tmp[sort(tmp$State_Areas, index.return = TRUE)$ix,]
+
 	
 	place = 1
 	data_sum <- list()
