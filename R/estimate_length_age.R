@@ -4,14 +4,21 @@
 #'
 #' @param list of data
 #' @param grouping not implemented (options: all, sex, source, state)
+#' @param linf L infinity (L2) for the user to specifiy if desired.
+#' @param l0 Initial length (L1) for the user to specifiy if desired.
+#' @param k von bert growth rate for the user to specifiy if desired.
 #' @return data frame with estimated length-at-age
 #'
 #' @author Chantel Wetzel
 #' @export
 #'
-estimate_length_age <- function(data, grouping = "all"){
+estimate_length_age <- function(data, grouping = "all", linf = NULL, l0 = NULL,k = NULL){
 
 	keep <- which(!is.na(data$Age))
+	data <- data[keep, ]
+
+	# Check for NA lengths from the aged fish and remove these
+	keep <- which(!is.na(data$Length))
 	data <- data[keep, ]
 
 	n_sex <- unique(data$Sex)
@@ -24,9 +31,9 @@ estimate_length_age <- function(data, grouping = "all"){
 	# if(grouping == "state")  { calc = c() }
 
 	# dynamically determine reasonable parameters
-	linf <- quantile(data$Length, 0.90)
-	l0   <- ifelse(linf > 30, 10, 5)
-	k    <- 0.10
+	if (is.null(linf)) { linf <- quantile(data$Length, 0.90) }
+	if (is.null(l0))   { l0   <- ifelse(linf > 30, 10, 5) }
+	if (is.null(k)) { k    <- 0.10 }
 
 	len_age_list <- list()
 	nm <- NULL
