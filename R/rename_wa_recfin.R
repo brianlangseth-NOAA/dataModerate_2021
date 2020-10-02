@@ -23,6 +23,9 @@ rename_wa_recfin <- function(data){
   data$RECFIN_LENGTH_MM = data$AGENCY_LENGTH = data$fish_length_cm * 10
   data$IS_RETAINED = "RETAINED"
 
+  # Change weight from gm to kilograms
+  data$AGENCY_WEIGHT = data$AGENCY_WEIGHT / 1000
+
   data$FISH_SEX[data$FISH_SEX == "Female"] = "F"
   data$FISH_SEX[data$FISH_SEX == "Male"] = "M"
   data$FISH_SEX[!data$FISH_SEX %in% c('F', 'M')] = 'U'
