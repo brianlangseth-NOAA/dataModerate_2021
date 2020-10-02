@@ -31,9 +31,9 @@ estimate_length_age <- function(data, grouping = "all", linf = NULL, l0 = NULL,k
 	# if(grouping == "state")  { calc = c() }
 
 	# dynamically determine reasonable parameters
-	if (is.null(linf)) { linf <- quantile(data$Length, 0.90) }
-	if (is.null(l0))   { l0   <- ifelse(linf > 30, 10, 5) }
-	if (is.null(k)) { k    <- 0.10 }
+	linf <- as.numeric(quantile(data$Length, 0.90))
+	l0   <- ifelse(linf > 30, 10, 5)
+	k    <- 0.10
 
 	len_age_list <- list()
 	nm <- NULL
