@@ -10,7 +10,7 @@
 #' @export
 #'
 rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, area_column_name = NULL,
-						  mode_grouping = NULL, mode_names = NULL, mode_column_name = NULL){
+						  mode_grouping = NULL, mode_names = NULL, mode_column_name = NULL, or_ages = FALSE){
 
 	col = which( colnames(data) %in% c("STATE_NAME", "State.Name", "SAMPLING_AGENCY_NAME"))
 	if (length(col) > 0){
@@ -97,8 +97,10 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, area_co
 	data$Year = year
 	data$Lat = NA
 	data$Lon = NA
-	data$State  = state
+	data$State = state
+	if(or_ages) { data$State = "ORage" }
 	data$State_Areas = State_Areas
+	if(or_ages) { data$State_Areas = "ORage" }
 	data$Areas  = NA
 	data$Depth  = NA
 	data$Sex    = sex
@@ -107,7 +109,8 @@ rename_recfin <- function(data, area_grouping = NULL, area_names = NULL, area_co
 	data$Age    = age
 	data$Fleet  = mode
 	data$Data_Type = retain
-	data$Source = "RecFIN"	
+	data$Source = "RecFIN"
+	if(or_ages) { data$Source = "RecFIN_ORage" }
 
 	return (data)
 }

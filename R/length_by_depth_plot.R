@@ -11,16 +11,10 @@
 #' @export
 #'
 length_by_depth_plot <- function(dir, data, xlim = NULL, ylim = NULL){
+  
+  dir.create(file.path(dir, "plots"), showWarnings = FALSE)
 
-    dir.create(file.path(dir, "plots"), showWarnings = FALSE)
-
-  	#sub_data = data[data$Source %in% c("Triennial", "NWFSC_WCGBTS", "NWFSC_Slope", "AKFS_Slope"), ]
-	remove = NULL
-	# Determine if all data sources have lengths 
-	for (s in unique(data$Source)){
-		check  <-  which(is.na( data[data$Source == s, "Length"]) | is.na( data[data$Source == s, "Depth"]) ) 
-		if (length(check) > 0) { remove <- c(remove, check) }
-	}
+	remove <- which(is.na(data$Length) | is.na(data$Depth))
 	
 	if(length(remove) > 0) { 
 		sub_data <- data[-remove, ]
