@@ -10,7 +10,7 @@
 #' @author Chantel Wetzel
 #' @export
 #'
-rename_survey_data <- function(data, area_split, area_names, survey_name = NULL){
+rename_survey_data <- function(data, area_split = NULL, area_names, survey_name = NULL){
 
 	state <- ifelse( data$Latitude_dd < 42, "CA", 
 			 ifelse( data$Latitude_dd < 46 & data$Latitude_dd >= 42, "OR",
@@ -19,15 +19,17 @@ rename_survey_data <- function(data, area_split, area_names, survey_name = NULL)
 	areas <- NA 
 
 	state_areas <- NA
-	for(a in 1:length(area_names)){
-		if (a == 1) { 
-			find = which(data$Latitude_dd < area_split[1]) }
-		if (a > 1 & a < length(area_names)){
-			find = which(data$Latitude_dd > area_split[a-1] & data$Latitude_dd < area_split[a]) }
-		if (a == length(area_names)){ 
-			find = which(data$Latitude_dd > area_split[a-1])}
-
-		state_areas[find] = area_names[a]
+	if(!is.null(area_split)){
+		for(a in 1:length(area_names)){
+			if (a == 1) { 
+				find = which(data$Latitude_dd < area_split[1]) }
+			if (a > 1 & a < length(area_names)){
+				find = which(data$Latitude_dd > area_split[a-1] & data$Latitude_dd < area_split[a]) }
+			if (a == length(area_names)){ 
+				find = which(data$Latitude_dd > area_split[a-1])}
+	
+			state_areas[find] = area_names[a]
+		}
 	}
 
 	project <- ifelse(unique(data$Project) == "NWFSC.Combo", "NWFSC_WCGBTS",
