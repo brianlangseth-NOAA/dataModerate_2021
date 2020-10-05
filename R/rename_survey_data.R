@@ -1,13 +1,16 @@
 #' Create standarized field for survey data
 #'
 #' @param data read in biological survey data
+#  @param area_split
+#  @param area_names
+#  @param survey_name
 #'
 #' @return A data frame 
 #'
 #' @author Chantel Wetzel
 #' @export
 #'
-rename_survey_data <- function(data, area_split, area_names){
+rename_survey_data <- function(data, area_split, area_names, survey_name = NULL){
 
 	state <- ifelse( data$Latitude_dd < 42, "CA", 
 			 ifelse( data$Latitude_dd < 46 & data$Latitude_dd >= 42, "OR",
@@ -33,6 +36,10 @@ rename_survey_data <- function(data, area_split, area_names){
 		       ifelse(unique(data$Project) == "NWFSC.Slope", "NWFSC_Slope",
 		       	"Other_Survey"))))
 
+	if (is.null(survey_name)){
+		survey_name = "survey"
+	}
+
 	data$Year = data$Year
 	data$Lat  = data$Latitude_dd
 	data$Lon  = data$Longitude_dd
@@ -44,7 +51,7 @@ rename_survey_data <- function(data, area_split, area_names){
 	data$Length = data$Length_cm
 	data$Weight = data$Weight
 	data$Age    = data$Age
-	data$Fleet  = "survey"
+	data$Fleet  = survey_name
 	data$Data_Type = "RETAINED"
 	data$Source = project	
 
