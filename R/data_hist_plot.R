@@ -54,7 +54,7 @@ for (aa in areas){
 	if(f_by_a > 3) { panels = c(3, 2) }
 	if(f_by_a > 5) { panels = c(3,3) }
 	
-	#pngfun(wd = dir, file = paste0(data_type,"_", aa, ".png"), w = 7, h = 7, pt = 12)
+	pngfun(wd = dir, file = paste0(data_type,"_", aa, ".png"), w = 7, h = 7, pt = 12)
 	
 	par(mfrow = panels, oma = c(1, 1, 2, 1))
 	plot(0, type = 'n', xlim = xlim, xaxs = 'i', ylim = c(0, ymax[ind]), yaxs = 'i', ylab = "Proportion", 
