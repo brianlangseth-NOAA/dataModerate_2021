@@ -3,8 +3,11 @@
 #' @param dir directory of where save save plots
 #' @param data data frame created by the create_data_frame function
 #' @param data_type plot either the length or age data (default "Length")
-#' @param group_by column name from data frame to group the data for plotting (e.g., State for
+#' @param group_column column name from data frame to group the data for plotting (e.g., State for
 #' to see the data by state)
+#' @param fleet_column column name from data frame to group for fleet structure
+#' @param ymax vector of ymax values that should be equal in to unique group_column values. Default
+#' input is NULL which sets the ymax to 0.15 for all group_column values.
 #'
 #' @return Nothing - plots
 #'
