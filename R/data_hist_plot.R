@@ -18,7 +18,7 @@
 data_hist <- function(dir, data, data_type = "Length", group_column = "State_Areas", 
 					  fleet_column = "Fleet", ymax = NULL, do_abline = TRUE){
 
-areas  = sort(unique(data[, group_column]))
+areas  = sort(unique(data[!is.na(data[,data_type]), group_column]))
 fleets = sort(unique(data[, fleet_column]))
 colvec <- c(rgb(1, 0, 0, alpha = 0.8), rgb(0, 0, 1, alpha = 0.5), rgb(0, 0, 0, alpha = 0.30))
 
@@ -60,7 +60,7 @@ for (aa in areas){
 	plot(0, type = 'n', xlim = xlim, xaxs = 'i', ylim = c(0, ymax[ind]), yaxs = 'i', ylab = "Proportion", 
 		axes = FALSE, , main = "All Combined")
 	grid(); axis(2, las = 1); axis(1)	
-	hist(tmp[!is.na(tmp[, colm]), data_type], breaks = bins, freq = FALSE, col = colvec[3], add = TRUE)
+	hist(tmp[!is.na(tmp[, colm]), data_type], breaks = bins, freq = FALSE, col = "black", add = TRUE)
 	if (do_abline){ abline(v = median(tmp[!is.na(tmp[, colm]), data_type]), col = 1, lwd = 2, lty = 2) }
 	
 	for (f in fleets){
@@ -82,7 +82,7 @@ for (aa in areas){
 		
 			if (length(fem) > 10) {
 				hist(fem, breaks = bins, freq = FALSE, col = colvec[1], add = TRUE)
-				if (do_abline){ abline(v = median(fem), col = 'red', lwd = 2, lty = 2) }
+				if (do_abline){ abline(v = median(fem), col = 'red', lwd = 2, lty = 1) }
 			}
 			if (length(mal) > 10) {
 			  	hist(mal, breaks = bins, freq = FALSE, col = colvec[2], add = TRUE)
@@ -90,7 +90,7 @@ for (aa in areas){
 			}
 			if (length(uns) > 10){
 				hist(uns, breaks = bins, freq = FALSE, col = colvec[3], add = TRUE)	
-				if (do_abline){ abline(v = median(uns), col = 1, lwd = 2, lty = 2) }
+				if (do_abline){ abline(v = median(uns), col = 1, lwd = 2, lty = 3) }
 
 			}
 			legend('topleft', legend = NA, bty = 'n', title = paste0("N = ", length(all)), cex = 1.2)
