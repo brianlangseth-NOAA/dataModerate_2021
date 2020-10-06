@@ -7,6 +7,11 @@
 #' @param splits not implemented
 #' @param nm_append text to append to the plot name
 #' @param ests list of estimates created by the estimate_length_weight function
+#' @param plots allows for the selection of a subset of plots
+#'              Plot 1: Length-Weight Plot by Souce with Sexes Combined
+#'              Plot 2: Length-Weight by Sex Combined and by Source
+#'              Plot 3: Length-Weight by State with Sexes Combined
+#'              Plot 4: Length-Weight by State and by Sex
 #'
 #' @return Nothing - plots
 #'
@@ -15,10 +20,7 @@
 #'
 length_weight_plot <- function(dir, data, splits = NA, nm_append = NULL, ests = NULL, plots = 1:4){
 
-# Plot 1: Length-Weight Plot by Souce with Sexes Combined
-# Plot 2: Length-Weight by Sex Combined and by Source
-# Plot 3: Length-Weight by State with Sexes Combined
-# Plot 4: Length-Weight by State and by Sex
+
 
 dir.create(file.path(dir, "plots"), showWarnings = FALSE)
 
