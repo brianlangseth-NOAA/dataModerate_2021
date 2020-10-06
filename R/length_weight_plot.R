@@ -13,7 +13,12 @@
 #' @author Chantel Wetzel
 #' @export
 #'
-length_weight_plot <- function(dir, data, splits = NA, nm_append = NULL, ests = NULL){
+length_weight_plot <- function(dir, data, splits = NA, nm_append = NULL, ests = NULL, plots = 1:4){
+
+# Plot 1: Length-Weight Plot by Souce with Sexes Combined
+# Plot 2: Length-Weight by Sex Combined and by Source
+# Plot 3: Length-Weight by State with Sexes Combined
+# Plot 4: Length-Weight by State and by Sex
 
 dir.create(file.path(dir, "plots"), showWarnings = FALSE)
 
@@ -45,6 +50,12 @@ lens = 1:max(data$Length, na.rm = TRUE)
 ymax = max(data$Weight, na.rm = TRUE)
 xmax = max(data$Length, na.rm = TRUE)
 
+line_col = c("red", 'blue', "grey")
+sex_col = alpha(line_col, 0.20)
+
+
+# Plot 1: Length-Weight Plot by Souce with Sexes Combined
+if (1 %in% plots){
 file = ifelse(is.null(nm_append), "Length_Weight_by_Source.png",
 			  paste0("Length_Weight_by_Source_", nm_append, ".png"))
 
@@ -78,15 +89,15 @@ pngfun(wd = file.path(dir, "plots"), file = file, w = 7, h = 7, pt = 12)
 				    paste0("Combined: a = ", signif(ests[a][[1]][1], digits = 3), " b = ", round(ests[a][[1]][2], 2) ),, 
 				    lty = 1, col = 1, lwd = 2)}	
 
-	}
-		
+	}		
 dev.off()
+}
 
+
+# Plot 2: Length-Weight by Sex Combined and by Source
+if (2 %in% plots){
 file = ifelse(is.null(nm_append), "Length_Weight_by_Sex.png",
 			  paste0("Length_Weight_by_Sex_", nm_append, ".png"))
-
-line_col = c("red", 'blue', "grey")
-sex_col = alpha(line_col, 0.20)
 
 pngfun(wd = file.path(dir, "plots"), file = file, w = 7, h = 7, pt = 12)
 	par(mfrow = c(panels[1], panels[2]) )
@@ -141,6 +152,11 @@ if (n != 1){
 } # if statement
 
 dev.off()
+}
+
+
+# Plot 3: Length-Weight by State with Sexes Combined
+if (3 %in% plots){
 
 file = ifelse(is.null(nm_append), "Length_Weight_by_State.png",
 			  paste0("Length_Weight_by_State_", nm_append, ".png"))
@@ -163,8 +179,10 @@ pngfun(wd = file.path(dir, "plots"), file = file, w = 7, h = 7, pt = 12)
 		}
 	}	
 dev.off()
+}
 
-
+# Plot 4: Length-Weight by State and by Sex
+if (4 %in% plots){
 file = ifelse(is.null(nm_append), "Length_Weight_by_State_Sex.png",
 			  paste0("Length_Weight_by_State_Sex_", nm_append, ".png"))
 
@@ -198,6 +216,6 @@ pngfun(wd = file.path(dir, "plots"), file = file, w = 7, h = 7, pt = 12)
 		} # state loop
 	} # source loop
 dev.off()
-
+}
 
 }

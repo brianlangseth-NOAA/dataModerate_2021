@@ -7,13 +7,23 @@
 #' @param splits not implemented
 #' @param nm_append text to append to the plot name
 #' @param ests list of estimates created by the estimate_length_weight function
+#' @param plots allows for a subset of plots to be selected
+#'        plot 1: Length-at-sge by from all sources and by each one for sexes combined
+#'        plot 2: Length-at-age by sex from all sources combined and by each one
+#'        plot 3: Length-at-age from each state with sexes combined 	
+#'        plot 4: Length-at-age by sex from each state
 #'
 #' @return Nothing - plots
 #'
 #' @author Chantel Wetzel
 #' @export
 #'
-length_age_plot <- function(dir, data, splits = NA, nm_append = NULL, ests = NULL){
+length_age_plot <- function(dir, data, splits = NA, nm_append = NULL, ests = NULL, plots = 1:4){
+
+# Plot 1: Length-at-sge by from all sources and by each one for sexes combined
+# Plot 2: Length-at-age by sex from all sources combined and by each one
+# Plot 3: Length-at-age from each state with sexes combined 	
+# Plot 4: Length-at-age by sex from each state
 
 dir.create(file.path(dir, "plots"), showWarnings = FALSE)
 
@@ -35,6 +45,8 @@ lens = 1:max(data$Length, na.rm = TRUE)
 xmax = max(data$Age,    na.rm = TRUE)
 ymax = max(data$Length, na.rm = TRUE)
 
+# Plot 1: Length-at-Age by from all Sources and by each one
+if (1 %in% plots){
 file = ifelse(is.null(nm_append), "Length_Age_by_Source.png",
 			  paste0("Length_Age_by_Source_", nm_append, ".png"))
 
@@ -69,7 +81,11 @@ pngfun(wd = file.path(dir, "plots"), file = file, w = 7, h = 7, pt = 12)
 	}
 		
 dev.off()
+}
 
+
+# Plot 2: Length-at-age by sex from all sources combined and by each one
+if (2 %in% plots){
 file = ifelse(is.null(nm_append), "Length_Age_by_Sex.png",
 			  paste0("Length_Age_by_Sex_", nm_append, ".png"))
 
@@ -141,7 +157,11 @@ pngfun(wd = file.path(dir, "plots"), file = file, w = 7, h = 7, pt = 12)
 	} # source loop	
 
 dev.off()
+}
 
+
+# Plot 3: Length-at-age from each state with sexes combined 
+if (3 %in% plots){
 file = ifelse(is.null(nm_append), "Length_Age_by_State.png",
 			  paste0("Length_Age_by_State_", nm_append, ".png"))
 
@@ -166,7 +186,10 @@ pngfun(wd = file.path(dir, "plots"), file = file, w = 7, h = 7, pt = 12)
 		}
 	}	
 dev.off()
+}
 
+# Plot 4: Length-at-age by sex from each state 
+if (4 %in% plots){
 file = ifelse(is.null(nm_append), "Length_Age_by_State_Sex.png",
 			  paste0("Length_Age_by_State_Sex_", nm_append, ".png"))
 
@@ -201,5 +224,6 @@ pngfun(wd = file.path(dir, "plots"), file = file, w = 7, h = 7, pt = 12)
 		if (length(leg) > 0 ) { legend("bottomright", bty = 'n', legend = leg, lty = 1:get, col = line_col, lwd = 2) }
 	} # state loop
 dev.off()
+}
 
 }
