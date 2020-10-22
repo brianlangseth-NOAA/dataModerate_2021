@@ -39,7 +39,10 @@ rename_pacfin <- function(data, area_grouping = NULL, area_names = NULL, fleet_g
 			find = grep(get, data$PCID, ignore.case = TRUE)
 			state_areas[find] = area_names[a]
 		}
-	}  
+	}
+
+	age = data$age1
+	age[which(age == -1)] = NA  
 
 	data$Year = data$SAMPLE_YEAR
 	data$Lat  = NA
@@ -50,8 +53,8 @@ rename_pacfin <- function(data, area_grouping = NULL, area_names = NULL, fleet_g
 	data$Depth  = NA
 	data$Sex    = data$SEX
 	data$Length = data$FISH_LENGTH / 10
-	data$Weight = data$FISH_WEIGHT
-	data$Age    = data$age1
+	data$Weight = data$FISH_WEIGHT / 2.20462
+	data$Age    = age
 	data$Fleet  = fleets
 	data$Data_Type = "RETAINED"
 	data$Source = "PacFIN"
