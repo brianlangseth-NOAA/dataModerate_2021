@@ -50,7 +50,7 @@ rename_pacfin <- function(data, area_grouping = NULL, area_names = NULL, fleet_g
 	data$Depth  = NA
 	data$Sex    = data$SEX
 	data$Length = data$FISH_LENGTH / 10
-	data$Weight = data$FISH_WEIGHT
+	data$Weight = data$FISH_WEIGHT / 2.20462
 	data$Age    = data$age1
 	data$Fleet  = fleets
 	data$Data_Type = "RETAINED"
