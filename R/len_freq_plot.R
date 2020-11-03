@@ -30,6 +30,8 @@ length_freq_plot <- function(dir, data, xlim = NULL, ylim = NULL){
 	if (n == 3) { panels = c(2, 2)}
 	if (n == 4) { panels = c(3, 2)}
 	if (n == 5) { panels = c(3, 2)}
+	if (n == 6) { panels = c(3, 2)}
+	
 
 	colvec <- c(rgb(1, 0, 0, alpha = 0.8), 
 				      rgb(0, 0, 1, alpha = 0.5),
