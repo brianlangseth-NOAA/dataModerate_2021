@@ -27,7 +27,7 @@ rename_mrfss <- function(data, len_col = "T_LEN", len_divide = 10,
 	length <- data[,len_col] / len_divide
 
 	# Set any computed weights to NA
-	weight <- NA
+	weight <- rep(NA, nrow(data))
 	find = which(colnames(data) %in% c("WGT", "Weight"))
 	keep <- which(data[,find] == round(data[,find], 2))
 	weight[keep] <- data[keep, find]
