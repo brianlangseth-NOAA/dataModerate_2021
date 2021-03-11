@@ -15,10 +15,8 @@
 #'
 rename_pacfin <- function(data, area_grouping = NULL, area_names = NULL, fleet_grouping = NULL, fleet_names = NULL, fleet_column_name = "COND"){
 
-	data <- PacFIN.Utilities::cleanPacFIN(Pdata = data, 
-								  keep_length_type = c("", "A", "F", "U", "T", NA),
-								  keep_missing_lengths = FALSE,
-								  keep_INPFC = c("VUS","CL","VN","COL","NC","SC","EU","CP","EK","MT","PS"))
+	data <- PacFIN.Utilities::cleanPacFIN(Pdata = data,
+										  keep_length_type = c("", "A", "D", "F", "R", "S", "T", "U", NA))
 
 	state <- ifelse( data$SOURCE_AGID == "C", "CA", 
 		     ifelse( data$SOURCE_AGID == "O", "OR",

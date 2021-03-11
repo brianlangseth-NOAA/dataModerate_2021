@@ -10,27 +10,27 @@
 #'
 rename_hook_and_line <- function(data, survey_name = NULL){
 
-	state <- ifelse( data$LATDD < 42, "CA", 
-		     ifelse( data$LATDD < 46 & data$LATDD >= 42, "OR",
-		     ifelse( data$LATDD >= 46, "WA", "OTHER")))
+	state <- ifelse( data$drop_latitude_degrees < 42, "CA", 
+		     ifelse( data$drop_latitude_degrees < 46 & data$drop_latitude_degrees >= 42, "OR",
+		     ifelse( data$drop_latitude_degrees >= 46, "WA", "OTHER")))
 	
-	areas <- ifelse( data$SITENAME >= 500, "CCA", "non_CCA")
+	areas <- ifelse( data$site_number >= 500, "CCA", "non_CCA")
 
 	if (is.null(survey_name)){
 		survey_name = "survey"
 	}
 
-	data$Year = data$YEAR
-	data$Lat  = data$LATDD
-	data$Lon  = data$LONDD
+	data$Year = data$year
+	data$Lat  = data$drop_latitude_degrees
+	data$Lon  = data$drop_longitude_degrees
 	data$State  = state
 	data$State_Areas = "south_pt_concep"
 	data$Areas  = areas
-	data$Depth  = data$DEPTHM
-	data$Sex    = data$SEX
-	data$Length = data$LENGTH
-	data$Weight = data$WEIGHT
-	data$Age    = NA
+	data$Depth  = data$drop_depth_meters
+	data$Sex    = data$sex
+	data$Length = data$length_cm
+	data$Weight = data$weight_kg
+	data$Age    = data$age_years
 	data$Fleet  = survey_name
 	data$Data_Type = "RETAINED"
 	data$Source = "NWFSC_HKL"	
