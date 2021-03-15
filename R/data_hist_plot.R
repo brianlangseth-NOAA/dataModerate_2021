@@ -19,8 +19,7 @@ data_hist <- function(dir, data, data_type = "Length", group_column = "State_Are
 					  fleet_column = "Fleet", ymax = NULL, do_abline = TRUE){
 
 areas  = sort(unique(data[!is.na(data[,data_type]), group_column]))
-fleets = sort(unique(data[, fleet_column]))
-colvec <- c(rgb(1, 0, 0, alpha = 0.8), rgb(0, 0, 1, alpha = 0.5), rgb(0, 0, 0, alpha = 0.30))
+fleets = sort(unique(data[!is.na(data[,data_type]), fleet_column]))
 
 colvec <- c(rgb(1, 0, 0, alpha = 0.8), rgb(0, 0, 1, alpha = 0.5), rgb(0, 0, 0, alpha = 0.30))
 xlim = c(0, ceiling(max(data[,data_type], na.rm = TRUE)))
@@ -45,7 +44,8 @@ for (aa in areas){
 
 	find = which(data[, group_column] == aa)
 	tmp  = data[find, ]
-	num_unique = aggregate(tmp[,data_type] ~ tmp[,fleet_column],  FUN = function(x) length(x))
+
+	num_unique = aggregate(tmp[,data_type] ~ tmp[,fleet_column], data = data[which(!is.na(data[,data_type])),],  FUN = function(x) length(x))
 
 	f_by_a = sum(num_unique[,2] > 20)
 
@@ -58,10 +58,10 @@ for (aa in areas){
 	
 	par(mfrow = panels, oma = c(1, 1, 2, 1))
 	plot(0, type = 'n', xlim = xlim, xaxs = 'i', ylim = c(0, ymax[ind]), yaxs = 'i', ylab = "Proportion", 
-		axes = FALSE, , main = "All Combined")
+		xlab = data_type, axes = FALSE, , main = "All Combined")
 	grid(); axis(2, las = 1); axis(1)	
-	hist(tmp[!is.na(tmp[, colm]), data_type], breaks = bins, freq = FALSE, col = "black", add = TRUE)
-	if (do_abline){ abline(v = median(tmp[!is.na(tmp[, colm]), data_type]), col = 1, lwd = 2, lty = 2) }
+	hist(tmp[, data_type], breaks = bins, freq = FALSE, col = "grey", add = TRUE)
+	if (do_abline){ abline(v = median(tmp[!is.na(tmp[, data_type]), data_type]), col = 1, lwd = 2, lty = 2) }
 	
 	for (f in fleets){
 	
@@ -74,7 +74,7 @@ for (aa in areas){
 	
 		if (length(all) > 20) {
 			plot(0, type = 'n', xlim = xlim, xaxs = 'i', ylim = c(0, ymax[ind]), yaxs = 'i', ylab = "Proportion", 
-				axes = FALSE, main = f)
+				xlab = data_type, axes = FALSE, main = f)
 			grid()
 			mtext(data_type, side = 1, line = 2.5, outer = TRUE)
 			axis(2, las = 1); axis(1)
