@@ -15,12 +15,10 @@
 #'
 rename_pacfin <- function(data, area_grouping = NULL, area_names = NULL, fleet_grouping = NULL, fleet_names = NULL, fleet_column_name = "COND"){
 
-	data <- PacFIN.Utilities::cleanPacFIN(Pdata = data,
-										  keep_length_type = c("", "A", "D", "F", "R", "S", "T", "U", NA))
-
-	state <- ifelse( data$SOURCE_AGID == "C", "CA", 
-		     ifelse( data$SOURCE_AGID == "O", "OR",
-		     ifelse( data$SOURCE_AGID == "W", "WA", "OTHER")))
+	data <- cleanPacFIN(Pdata = data,
+					 keep_age_method = c("B", "BB", 1),
+  					 CLEAN = TRUE, 
+  					 verbose = FALSE)
 
 	fleets <- NA
 	if(!is.null(fleet_grouping)){
@@ -39,20 +37,17 @@ rename_pacfin <- function(data, area_grouping = NULL, area_names = NULL, fleet_g
 		}
 	}
 
-	age = data$age1
-	age[which(age == -1)] = NA  
-
 	data$Year = data$SAMPLE_YEAR
 	data$Lat  = NA
 	data$Lon  = NA
-	data$State  = state
+	data$State  = data$state
 	data$State_Areas  = state_areas
 	data$Areas  = NA
 	data$Depth  = NA
 	data$Sex    = data$SEX
-	data$Length = data$FISH_LENGTH / 10
-	data$Weight = data$FISH_WEIGHT / 2.20462
-	data$Age    = age
+	data$Length = data$lengthcm #/ 10
+	data$Weight = data$weightkg #/ 2.20462
+	data$Age    = data$Age
 	data$Fleet  = fleets
 	data$Data_Type = "RETAINED"
 	data$Source = "PacFIN"
