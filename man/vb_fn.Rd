@@ -6,10 +6,16 @@
 single data frame that can be used for biological comparisons acroos
 data sources}
 \usage{
-vb_fn(age_vec, Linf, k, t0)
+vb_fn(age, Linf, L0, k)
 }
 \arguments{
-\item{t0}{}
+\item{age}{vector of ages to predict length for (e.g., age = 1:60)}
+
+\item{Linf}{maximum length parameter}
+
+\item{L0}{initial length parameter when growth changes}
+
+\item{k}{von Bertenlaffy growth parameter}
 }
 \value{
 A vector of

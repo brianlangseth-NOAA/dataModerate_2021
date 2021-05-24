@@ -9,7 +9,11 @@ data sources}
 vb_opt_fn(x, age, lengths)
 }
 \arguments{
-\item{length}{}
+\item{x}{vector of parameters c(Linf, L0, k)}
+
+\item{age}{data vector of ages}
+
+\item{length}{data vector of lengths by age}
 }
 \value{
 A vector of

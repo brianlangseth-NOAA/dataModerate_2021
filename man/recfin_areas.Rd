@@ -4,7 +4,7 @@
 \alias{recfin_areas}
 \title{Create standarized field for RecFIN data}
 \usage{
-recfin_areas(data, area_grouping, area_names)
+recfin_areas(data, area_grouping, area_names, column_name)
 }
 \arguments{
 \item{data}{read in RecFIN data}
@@ -12,6 +12,8 @@ recfin_areas(data, area_grouping, area_names)
 \item{area_grouping}{list of area names in data source}
 
 \item{area_names}{user area names}
+
+\item{column_name}{name to do the grouping with (default is based on recfin)}
 }
 \value{
 A data frame

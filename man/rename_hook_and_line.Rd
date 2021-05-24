@@ -4,10 +4,12 @@
 \alias{rename_hook_and_line}
 \title{Create standarized field for hook & line data}
 \usage{
-rename_hook_and_line(data)
+rename_hook_and_line(data, survey_name = NULL)
 }
 \arguments{
 \item{data}{read in hook and line data}
+
+\item{survey_name}{}
 }
 \value{
 A data frame

@@ -3,7 +3,7 @@
 \name{summarize_data}
 \alias{summarize_data}
 \title{Summarize all the data to evaluate the samples by source,
-year, and biological measurement (length, weight, age)}
+year, state, and biological measurement (length, weight, age)}
 \usage{
 summarize_data(dir = NULL, data)
 }
@@ -17,7 +17,7 @@ list
 }
 \description{
 Summarize all the data to evaluate the samples by source,
-year, and biological measurement (length, weight, age)
+year, state, and biological measurement (length, weight, age)
 }
 \author{
 Chantel Wetzel

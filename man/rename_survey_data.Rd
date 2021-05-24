@@ -4,7 +4,7 @@
 \alias{rename_survey_data}
 \title{Create standarized field for survey data}
 \usage{
-rename_survey_data(data)
+rename_survey_data(data, area_split = NULL, area_names, survey_name = NULL)
 }
 \arguments{
 \item{data}{read in biological survey data}
