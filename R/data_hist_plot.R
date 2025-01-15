@@ -49,6 +49,7 @@ for (aa in areas){
 
 	f_by_a = sum(num_unique[,2] > 20)
 
+	if(f_by_a == 0) { panels = c(1,1) }
 	if(f_by_a == 1) { panels = c(2,1) }
 	if(f_by_a %in% 2:3) { panels = c(2, 2) }
 	if(f_by_a > 3) { panels = c(3, 2) }
@@ -67,10 +68,10 @@ for (aa in areas){
 	
 		f_column = which(colnames(tmp) == fleet_column)
 
-		all <- tmp[tmp[,f_column] == f & !is.na(tmp[, colm]), data_type]
-		fem <- tmp[tmp[,f_column] == f & tmp$Sex == "F" & !is.na(tmp[, colm]), data_type]
-		mal <- tmp[tmp[,f_column] == f & tmp$Sex == "M" & !is.na(tmp[, colm]), data_type]
-		uns <- tmp[tmp[,f_column] == f & tmp$Sex == "U" & !is.na(tmp[, colm]), data_type]
+		all <- tmp[which(tmp[,f_column] == f & !is.na(tmp[, colm])), data_type]
+		fem <- tmp[which(tmp[,f_column] == f & tmp$Sex == "F" & !is.na(tmp[, colm])), data_type]
+		mal <- tmp[which(tmp[,f_column] == f & tmp$Sex == "M" & !is.na(tmp[, colm])), data_type]
+		uns <- tmp[which(tmp[,f_column] == f & tmp$Sex == "U" & !is.na(tmp[, colm])), data_type]
 	
 		if (length(all) > 20) {
 			plot(0, type = 'n', xlim = xlim, xaxs = 'i', ylim = c(0, ymax[ind]), yaxs = 'i', ylab = "Proportion", 
